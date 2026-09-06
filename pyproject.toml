@@ -1,0 +1,97 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "locus-benchmark"
+version = "0.2.0"
+description = "LOCUS: a within-paper citation-location discrimination benchmark"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "numpy>=2.0",
+    "polars>=1.40",
+    "scipy>=1.11",
+]
+
+[project.scripts]
+locus = "locus.cli:main"
+
+[project.optional-dependencies]
+node2vec = ["gensim>=4.4.0"]
+# `locus.embed_specter2` is an S3-native job: it downloads the pinned model,
+# stages inputs and uploads shards, so boto3 is a hard requirement of that one
+# module and of nothing else. It is declared here rather than left undeclared
+# so `pip install -e .` describes what it actually installs.
+cloud = ["boto3>=1.34"]
+gpu = ["torch>=2.0", "transformers>=4.40"]
+dev = ["pytest>=8.0", "ruff>=0.16,<0.17"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["equivalence: recomputes frozen numbers; requires LOCUS_WORK_DIR"]
+# pytest's default norecursedirs excludes any directory literally named
+# "build" -- which silently swallowed tests/build/ with no error, just a
+# smaller collected count. Same default list minus "build".
+norecursedirs = ["*.egg", ".*", "_darcs", "CVS", "dist", "node_modules", "venv", "{arch}"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+# `select` below names CATEGORY PREFIXES (UP, B, SIM, RUF, PERF, FURB, E7,
+# I), and ruff adds new rules to those categories in essentially every minor
+# release -- a runner that resolves a newer ruff than this was validated
+# against can surface fresh findings under this identical config, which is
+# exactly the failure mode the pinned `select` exists to eliminate, just one
+# level down (from "which categories" to "which rules within a category").
+# So the version itself has to be bounded, matching the `dev` extra's
+# `ruff>=0.16,<0.17`: a mismatched ruff refuses to run instead of silently
+# redefining what "clean" means.
+required-version = ">=0.16,<0.17"
+
+[tool.ruff.lint]
+# Pinned explicitly: ruff's own default rule set changed between 0.15 and
+# 0.16 (0.15.22 -> E4,E7,E9,F; 0.16.5 -> a much broader curated default),
+# so "lint is clean" must not depend on whichever ruff version pip resolves.
+#
+#   F     pyflakes
+#   E401, E7, E9
+#         pycodestyle error subset. E402 (module-import-not-at-top) is
+#         deliberately NOT included: two test files use
+#         `pytest.importorskip("torch")` followed by a module-level
+#         `from torch import ...` / `from locus.<torch-dependent> import ...`
+#         so the file skips cleanly when torch is absent -- that ordering is
+#         required and E402 would otherwise flag it, with no permitted
+#         noqa/per-file-ignore to silence it.
+#   I     isort (import ordering)
+#   UP    pyupgrade
+#   B     flake8-bugbear
+#   PERF  perflint -- accepted because the codebase already satisfies it,
+#         and enforcing it (values()-only dict iteration, list
+#         comprehensions over append-in-a-loop) costs nothing.
+#   SIM   flake8-simplify -- same reasoning: mechanical control-flow/idiom
+#         simplifications, no arithmetic content.
+#   RUF   ruff-native rules -- same reasoning (unused unpacked variables,
+#         redundant casts, list-concat-vs-unpack, stale noqa, regex
+#         metacharacters in `pytest.raises(match=...)`).
+#   FURB  refurb -- same reasoning (`f.writelines` over a `for` + `f.write`
+#         loop).
+#
+# PLR (pylint refactor) is deliberately excluded, not merely left off the
+# minimum list: PLR0124 ("name compared with itself") flags the
+# `x != x` self-inequality idiom this codebase uses on purpose for
+# IEEE-754 NaN detection in probe.py and test_rescore.py -- both sites
+# carry comments explaining why. That is a false positive against a
+# documented arithmetic invariant, not a lint we haven't gotten to, so the
+# whole family is left out rather than special-cased inside a category we
+# don't otherwise need. PLR0124 is also only 5 of the 109 PLR findings on
+# this codebase: the bulk of the family is PLR2004 (magic value comparison,
+# 78 findings), PLR0913/PLR0917 (too many arguments, 8 each), PLR0915 (too
+# many statements, 6), and PLR0912 (too many branches, 4) -- complexity and
+# magic-value conventions this codebase does not adopt, not rules it merely
+# hasn't satisfied yet.
+select = ["F", "E401", "E7", "E9", "I", "UP", "B", "PERF", "SIM", "RUF", "FURB"]

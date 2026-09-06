@@ -1,0 +1,128 @@
+{
+  "split": "val",
+  "corpus": null,
+  "config": {
+    "pool_size": 10,
+    "swap_k": 5,
+    "shingle_n": 8,
+    "theta": 0.5,
+    "hardness_tau": 0.5,
+    "seed": 0
+  },
+  "contexts": 112779,
+  "citing_papers": 11637,
+  "alignment_success": 93194,
+  "alignment_failure": 19585,
+  "alignment_parse_failure": 5903,
+  "alignment_validation_failure": 13682,
+  "num_locations": 62466,
+  "contexts_per_location": 1.8054461627125156,
+  "anchor_distribution": {
+    "0": 31324,
+    "1": 30448,
+    "2": 17225,
+    "3": 10064,
+    "4": 6389,
+    "5": 4282,
+    "6": 2956,
+    "7": 2217,
+    "8": 1487,
+    "9": 1174,
+    "10": 929,
+    "11": 644,
+    "12": 576,
+    "13": 429,
+    "14": 346,
+    "15": 396,
+    "16": 450,
+    "17": 220,
+    "18": 105,
+    "19": 111,
+    "20": 113,
+    "21": 41,
+    "22": 50,
+    "23": 104,
+    "24": 23,
+    "25": 29,
+    "26": 82,
+    "27": 11,
+    "28": 2,
+    "30": 1,
+    "31": 11,
+    "32": 21,
+    "34": 35,
+    "35": 54,
+    "36": 5,
+    "37": 22,
+    "38": 14,
+    "39": 61,
+    "40": 68,
+    "41": 8,
+    "42": 20,
+    "43": 61,
+    "44": 19,
+    "45": 14,
+    "46": 18,
+    "47": 14,
+    "48": 18,
+    "49": 27,
+    "50": 16,
+    "51": 13,
+    "52": 11,
+    "53": 10,
+    "54": 2,
+    "55": 9
+  },
+  "anchor_ge1_clustering": 72786,
+  "anchor_ge1_marker": 69476,
+  "anchor_ge1_union": 81455,
+  "marker_anchors_self": 12455,
+  "marker_anchors_unresolvable": 195835,
+  "marker_anchors_implausible": 44598,
+  "marker_anchors_total": 244485,
+  "clustering_disagreement": 47862,
+  "pool_drop_reasons": {
+    "too_few_distractors": 40257,
+    "single_location": 3378,
+    "alignment_failed": 19585,
+    "kept": 49559
+  },
+  "rank_items": 49559,
+  "swap_pair_count": 33203,
+  "hard": 38835,
+  "headline": 31402,
+  "null_controls": {
+    "swap_popularity": {
+      "value": 0.5,
+      "ci": [
+        0.5,
+        0.5
+      ],
+      "ok": true
+    },
+    "swap_constant": {
+      "value": 0.5,
+      "ci": [
+        0.5,
+        0.5
+      ],
+      "ok": true
+    },
+    "rank_constant": {
+      "value": 0.2928968253968254,
+      "ci": [
+        0.2928968253968254,
+        0.2928968253968254
+      ],
+      "ok": true
+    },
+    "rank_popularity": {
+      "value": 0.352294182308556,
+      "moves_off_floor": true
+    }
+  },
+  "failures": [
+    "alignment failure 17.4% > 15%"
+  ],
+  "scale_notes": []
+}

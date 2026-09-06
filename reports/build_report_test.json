@@ -1,0 +1,105 @@
+{
+  "split": "test",
+  "corpus": null,
+  "config": {
+    "pool_size": 10,
+    "swap_k": 5,
+    "shingle_n": 8,
+    "theta": 0.5,
+    "hardness_tau": 0.5,
+    "seed": 0
+  },
+  "contexts": 104401,
+  "citing_papers": 9208,
+  "alignment_success": 91352,
+  "alignment_failure": 13049,
+  "alignment_parse_failure": 3879,
+  "alignment_validation_failure": 9170,
+  "num_locations": 55714,
+  "contexts_per_location": 1.873873712172883,
+  "anchor_distribution": {
+    "0": 26067,
+    "1": 26973,
+    "2": 16539,
+    "3": 10010,
+    "4": 6719,
+    "5": 4801,
+    "6": 3190,
+    "7": 2210,
+    "8": 1750,
+    "9": 1384,
+    "10": 946,
+    "11": 687,
+    "12": 684,
+    "13": 320,
+    "14": 473,
+    "15": 234,
+    "16": 168,
+    "17": 162,
+    "18": 151,
+    "19": 205,
+    "20": 158,
+    "21": 79,
+    "22": 66,
+    "23": 83,
+    "24": 50,
+    "25": 116,
+    "26": 29,
+    "27": 8,
+    "28": 31,
+    "32": 37,
+    "36": 37,
+    "38": 33,
+    "40": 1
+  },
+  "anchor_ge1_clustering": 69874,
+  "anchor_ge1_marker": 70357,
+  "anchor_ge1_union": 78334,
+  "marker_anchors_self": 12831,
+  "marker_anchors_unresolvable": 182355,
+  "marker_anchors_implausible": 28148,
+  "marker_anchors_total": 244345,
+  "clustering_disagreement": 41576,
+  "pool_drop_reasons": {
+    "too_few_distractors": 33455,
+    "single_location": 2409,
+    "alignment_failed": 13049,
+    "kept": 55488
+  },
+  "rank_items": 55488,
+  "swap_pair_count": 27905,
+  "hard": 43372,
+  "headline": 35701,
+  "null_controls": {
+    "swap_popularity": {
+      "value": 0.5,
+      "ci": [
+        0.5,
+        0.5
+      ],
+      "ok": true
+    },
+    "swap_constant": {
+      "value": 0.5,
+      "ci": [
+        0.5,
+        0.5
+      ],
+      "ok": true
+    },
+    "rank_constant": {
+      "value": 0.2928968253968254,
+      "ci": [
+        0.2928968253968254,
+        0.2928968253968254
+      ],
+      "ok": true
+    },
+    "rank_popularity": {
+      "value": 0.34466787820917955,
+      "moves_off_floor": true
+    }
+  },
+  "failures": [],
+  "scale_notes": []
+}

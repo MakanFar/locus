@@ -1,0 +1,19 @@
+{
+  "papers_counted": 395536,
+  "vocab": 518076,
+  "directed_nonzeros": 3685020,
+  "pair_instances": 2988497,
+  "n_total": 5976994,
+  "held_out_papers": 20845,
+  "leakage_overlap": 20845,
+  "alpha1_mismatches": 0,
+  "val_determinism": true,
+  "peak_rss_gb": 0.605743408203125,
+  "splits": [
+    "train",
+    "val",
+    "test"
+  ],
+  "leaky_by_design": true,
+  "failures": []
+}

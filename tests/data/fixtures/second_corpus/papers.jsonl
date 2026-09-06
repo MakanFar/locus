@@ -1,0 +1,291 @@
+{"id": "ref_shared_0", "title": "Synthetic shared reference 0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_shared_1", "title": "Synthetic shared reference 1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_shared_2", "title": "Synthetic shared reference 2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_shared_3", "title": "Synthetic shared reference 3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_shared_4", "title": "Synthetic shared reference 4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_shared_5", "title": "Synthetic shared reference 5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_000", "title": "Synthetic citing paper 0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_0", "title": "Synthetic reference 0-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_2", "title": "Synthetic reference 0-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_3", "title": "Synthetic reference 0-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_4", "title": "Synthetic reference 0-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_5", "title": "Synthetic reference 0-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_6", "title": "Synthetic reference 0-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_000_7", "title": "Synthetic reference 0-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_001", "title": "Synthetic citing paper 1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_0", "title": "Synthetic reference 1-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_1", "title": "Synthetic reference 1-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_3", "title": "Synthetic reference 1-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_4", "title": "Synthetic reference 1-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_5", "title": "Synthetic reference 1-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_001_7", "title": "Synthetic reference 1-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_002", "title": "Synthetic citing paper 2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_002_1", "title": "Synthetic reference 2-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_002_3", "title": "Synthetic reference 2-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_002_7", "title": "Synthetic reference 2-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_003", "title": "Synthetic citing paper 3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_0", "title": "Synthetic reference 3-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_2", "title": "Synthetic reference 3-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_3", "title": "Synthetic reference 3-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_4", "title": "Synthetic reference 3-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_5", "title": "Synthetic reference 3-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_003_7", "title": "Synthetic reference 3-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_004", "title": "Synthetic citing paper 4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_1", "title": "Synthetic reference 4-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_2", "title": "Synthetic reference 4-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_3", "title": "Synthetic reference 4-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_4", "title": "Synthetic reference 4-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_5", "title": "Synthetic reference 4-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_6", "title": "Synthetic reference 4-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_004_7", "title": "Synthetic reference 4-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_005", "title": "Synthetic citing paper 5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_0", "title": "Synthetic reference 5-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_1", "title": "Synthetic reference 5-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_2", "title": "Synthetic reference 5-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_3", "title": "Synthetic reference 5-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_4", "title": "Synthetic reference 5-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_5", "title": "Synthetic reference 5-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_6", "title": "Synthetic reference 5-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_005_7", "title": "Synthetic reference 5-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_006", "title": "Synthetic citing paper 6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_0", "title": "Synthetic reference 6-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_1", "title": "Synthetic reference 6-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_2", "title": "Synthetic reference 6-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_3", "title": "Synthetic reference 6-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_4", "title": "Synthetic reference 6-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_5", "title": "Synthetic reference 6-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_6", "title": "Synthetic reference 6-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_006_7", "title": "Synthetic reference 6-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_007", "title": "Synthetic citing paper 7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_0", "title": "Synthetic reference 7-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_2", "title": "Synthetic reference 7-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_3", "title": "Synthetic reference 7-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_5", "title": "Synthetic reference 7-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_6", "title": "Synthetic reference 7-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_007_7", "title": "Synthetic reference 7-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_008", "title": "Synthetic citing paper 8", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_0", "title": "Synthetic reference 8-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_1", "title": "Synthetic reference 8-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_3", "title": "Synthetic reference 8-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_4", "title": "Synthetic reference 8-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_5", "title": "Synthetic reference 8-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_008_7", "title": "Synthetic reference 8-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_009", "title": "Synthetic citing paper 9", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_0", "title": "Synthetic reference 9-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_1", "title": "Synthetic reference 9-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_2", "title": "Synthetic reference 9-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_4", "title": "Synthetic reference 9-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_5", "title": "Synthetic reference 9-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_009_6", "title": "Synthetic reference 9-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_010", "title": "Synthetic citing paper 10", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_010_0", "title": "Synthetic reference 10-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_010_2", "title": "Synthetic reference 10-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_010_3", "title": "Synthetic reference 10-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_010_4", "title": "Synthetic reference 10-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_010_7", "title": "Synthetic reference 10-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_011", "title": "Synthetic citing paper 11", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_011_1", "title": "Synthetic reference 11-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_011_2", "title": "Synthetic reference 11-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_011_3", "title": "Synthetic reference 11-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_011_4", "title": "Synthetic reference 11-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_011_6", "title": "Synthetic reference 11-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_012", "title": "Synthetic citing paper 12", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_0", "title": "Synthetic reference 12-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_1", "title": "Synthetic reference 12-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_2", "title": "Synthetic reference 12-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_3", "title": "Synthetic reference 12-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_5", "title": "Synthetic reference 12-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_6", "title": "Synthetic reference 12-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_012_7", "title": "Synthetic reference 12-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_013", "title": "Synthetic citing paper 13", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_0", "title": "Synthetic reference 13-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_1", "title": "Synthetic reference 13-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_3", "title": "Synthetic reference 13-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_4", "title": "Synthetic reference 13-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_5", "title": "Synthetic reference 13-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_013_7", "title": "Synthetic reference 13-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_014", "title": "Synthetic citing paper 14", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_0", "title": "Synthetic reference 14-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_1", "title": "Synthetic reference 14-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_3", "title": "Synthetic reference 14-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_4", "title": "Synthetic reference 14-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_6", "title": "Synthetic reference 14-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_014_7", "title": "Synthetic reference 14-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_015", "title": "Synthetic citing paper 15", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_015_0", "title": "Synthetic reference 15-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_015_1", "title": "Synthetic reference 15-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_015_3", "title": "Synthetic reference 15-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_015_4", "title": "Synthetic reference 15-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_015_7", "title": "Synthetic reference 15-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_016", "title": "Synthetic citing paper 16", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_0", "title": "Synthetic reference 16-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_1", "title": "Synthetic reference 16-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_2", "title": "Synthetic reference 16-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_4", "title": "Synthetic reference 16-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_6", "title": "Synthetic reference 16-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_016_7", "title": "Synthetic reference 16-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_017", "title": "Synthetic citing paper 17", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_0", "title": "Synthetic reference 17-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_2", "title": "Synthetic reference 17-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_3", "title": "Synthetic reference 17-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_5", "title": "Synthetic reference 17-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_6", "title": "Synthetic reference 17-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_017_7", "title": "Synthetic reference 17-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_018", "title": "Synthetic citing paper 18", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_0", "title": "Synthetic reference 18-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_1", "title": "Synthetic reference 18-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_2", "title": "Synthetic reference 18-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_4", "title": "Synthetic reference 18-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_5", "title": "Synthetic reference 18-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_018_7", "title": "Synthetic reference 18-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_019", "title": "Synthetic citing paper 19", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_0", "title": "Synthetic reference 19-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_2", "title": "Synthetic reference 19-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_3", "title": "Synthetic reference 19-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_4", "title": "Synthetic reference 19-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_5", "title": "Synthetic reference 19-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_6", "title": "Synthetic reference 19-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_019_7", "title": "Synthetic reference 19-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_020", "title": "Synthetic citing paper 20", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_0", "title": "Synthetic reference 20-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_1", "title": "Synthetic reference 20-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_2", "title": "Synthetic reference 20-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_4", "title": "Synthetic reference 20-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_5", "title": "Synthetic reference 20-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_6", "title": "Synthetic reference 20-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_020_7", "title": "Synthetic reference 20-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_021", "title": "Synthetic citing paper 21", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_021_0", "title": "Synthetic reference 21-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_021_1", "title": "Synthetic reference 21-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_021_4", "title": "Synthetic reference 21-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_021_7", "title": "Synthetic reference 21-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_022", "title": "Synthetic citing paper 22", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_0", "title": "Synthetic reference 22-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_1", "title": "Synthetic reference 22-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_3", "title": "Synthetic reference 22-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_4", "title": "Synthetic reference 22-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_5", "title": "Synthetic reference 22-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_6", "title": "Synthetic reference 22-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_022_7", "title": "Synthetic reference 22-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_023", "title": "Synthetic citing paper 23", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_0", "title": "Synthetic reference 23-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_1", "title": "Synthetic reference 23-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_2", "title": "Synthetic reference 23-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_3", "title": "Synthetic reference 23-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_5", "title": "Synthetic reference 23-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_023_6", "title": "Synthetic reference 23-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_024", "title": "Synthetic citing paper 24", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_1", "title": "Synthetic reference 24-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_2", "title": "Synthetic reference 24-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_4", "title": "Synthetic reference 24-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_5", "title": "Synthetic reference 24-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_6", "title": "Synthetic reference 24-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_024_7", "title": "Synthetic reference 24-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_025", "title": "Synthetic citing paper 25", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_0", "title": "Synthetic reference 25-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_1", "title": "Synthetic reference 25-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_2", "title": "Synthetic reference 25-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_3", "title": "Synthetic reference 25-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_5", "title": "Synthetic reference 25-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_6", "title": "Synthetic reference 25-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_025_7", "title": "Synthetic reference 25-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_026", "title": "Synthetic citing paper 26", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_0", "title": "Synthetic reference 26-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_3", "title": "Synthetic reference 26-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_4", "title": "Synthetic reference 26-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_5", "title": "Synthetic reference 26-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_6", "title": "Synthetic reference 26-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_026_7", "title": "Synthetic reference 26-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_027", "title": "Synthetic citing paper 27", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_0", "title": "Synthetic reference 27-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_1", "title": "Synthetic reference 27-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_2", "title": "Synthetic reference 27-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_3", "title": "Synthetic reference 27-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_4", "title": "Synthetic reference 27-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_027_7", "title": "Synthetic reference 27-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_028", "title": "Synthetic citing paper 28", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_0", "title": "Synthetic reference 28-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_1", "title": "Synthetic reference 28-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_2", "title": "Synthetic reference 28-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_4", "title": "Synthetic reference 28-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_5", "title": "Synthetic reference 28-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_028_7", "title": "Synthetic reference 28-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_029", "title": "Synthetic citing paper 29", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_1", "title": "Synthetic reference 29-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_3", "title": "Synthetic reference 29-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_4", "title": "Synthetic reference 29-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_5", "title": "Synthetic reference 29-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_6", "title": "Synthetic reference 29-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_029_7", "title": "Synthetic reference 29-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_030", "title": "Synthetic citing paper 30", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_030_1", "title": "Synthetic reference 30-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_030_2", "title": "Synthetic reference 30-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_030_3", "title": "Synthetic reference 30-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_030_4", "title": "Synthetic reference 30-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_031", "title": "Synthetic citing paper 31", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_0", "title": "Synthetic reference 31-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_1", "title": "Synthetic reference 31-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_3", "title": "Synthetic reference 31-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_4", "title": "Synthetic reference 31-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_5", "title": "Synthetic reference 31-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_031_7", "title": "Synthetic reference 31-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_032", "title": "Synthetic citing paper 32", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_0", "title": "Synthetic reference 32-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_1", "title": "Synthetic reference 32-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_3", "title": "Synthetic reference 32-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_4", "title": "Synthetic reference 32-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_6", "title": "Synthetic reference 32-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_032_7", "title": "Synthetic reference 32-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_033", "title": "Synthetic citing paper 33", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_0", "title": "Synthetic reference 33-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_1", "title": "Synthetic reference 33-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_2", "title": "Synthetic reference 33-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_3", "title": "Synthetic reference 33-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_4", "title": "Synthetic reference 33-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_5", "title": "Synthetic reference 33-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_6", "title": "Synthetic reference 33-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_033_7", "title": "Synthetic reference 33-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_034", "title": "Synthetic citing paper 34", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_0", "title": "Synthetic reference 34-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_1", "title": "Synthetic reference 34-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_2", "title": "Synthetic reference 34-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_3", "title": "Synthetic reference 34-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_4", "title": "Synthetic reference 34-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_5", "title": "Synthetic reference 34-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_6", "title": "Synthetic reference 34-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_034_7", "title": "Synthetic reference 34-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_035", "title": "Synthetic citing paper 35", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_035_1", "title": "Synthetic reference 35-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_035_2", "title": "Synthetic reference 35-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_035_3", "title": "Synthetic reference 35-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_035_5", "title": "Synthetic reference 35-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_035_6", "title": "Synthetic reference 35-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_036", "title": "Synthetic citing paper 36", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_0", "title": "Synthetic reference 36-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_1", "title": "Synthetic reference 36-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_2", "title": "Synthetic reference 36-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_3", "title": "Synthetic reference 36-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_5", "title": "Synthetic reference 36-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_6", "title": "Synthetic reference 36-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_036_7", "title": "Synthetic reference 36-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_037", "title": "Synthetic citing paper 37", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_0", "title": "Synthetic reference 37-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_1", "title": "Synthetic reference 37-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_2", "title": "Synthetic reference 37-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_3", "title": "Synthetic reference 37-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_4", "title": "Synthetic reference 37-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_6", "title": "Synthetic reference 37-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_037_7", "title": "Synthetic reference 37-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_038", "title": "Synthetic citing paper 38", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_038_0", "title": "Synthetic reference 38-0", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_038_2", "title": "Synthetic reference 38-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_038_5", "title": "Synthetic reference 38-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_038_6", "title": "Synthetic reference 38-6", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_038_7", "title": "Synthetic reference 38-7", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "citing_039", "title": "Synthetic citing paper 39", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_1", "title": "Synthetic reference 39-1", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_2", "title": "Synthetic reference 39-2", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_3", "title": "Synthetic reference 39-3", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_4", "title": "Synthetic reference 39-4", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_5", "title": "Synthetic reference 39-5", "abstract": "Synthetic abstract; not derived from any real corpus."}
+{"id": "ref_039_6", "title": "Synthetic reference 39-6", "abstract": "Synthetic abstract; not derived from any real corpus."}

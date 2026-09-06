@@ -1,0 +1,39 @@
+LOCUS
+Copyright 2026 The LOCUS Authors
+
+This product includes software developed by The LOCUS Authors.
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+------------------------------------------------------------------------
+Upstream dataset
+------------------------------------------------------------------------
+
+LOCUS is built on the arXiv split of the Local Citation Recommendation
+dataset of Gu, Gao and Hahnloser (ECIR 2022), doi:10.1007/978-3-030-99736-6_19.
+That dataset is theirs and is governed by their terms; obtain it from them.
+
+No upstream text is redistributed by this project. The released artefact
+bundle carries paper and context IDENTIFIERS, integers and booleans only.
+Titles, abstracts and citation windows appear nowhere in it. This is
+directly checkable for the bundle's `.jsonl` rows -- each is line-oriented
+JSON whose string fields are identifiers -- and holds for the rest of the
+bundle too: `locus_manifest_{split}.json` and `bundle_manifest.json` add
+only descriptive prose about the release itself (never upstream text), and
+`cocitation_train.npz`'s only string array (`vocab`) holds identifier
+strings, with every other array holding counts or indices.
+
+The released bundle (identifiers and derived counts) is licensed
+CC-BY-4.0. The code is Apache-2.0.
+
+------------------------------------------------------------------------
+Third-party models
+------------------------------------------------------------------------
+
+The benchmark scores, but does not redistribute, third-party encoders:
+
+  allenai/specter2_base   Apache-2.0, via Hugging Face
+  malteos/scincl          MIT, via Hugging Face, revision
+                          ebc5348d184ba2fc9beee69b4e394263fce57b2e
+  HAtten                  Gu et al.'s Local-Citation-Recommendation
+                          repository; imported from a path the user
+                          supplies with --lcr-src, never vendored.
