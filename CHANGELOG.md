@@ -23,6 +23,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `--model malteos/scincl` no longer loads at SPECTER2's commit.
 
 ### Changed
+- `docs/reproduce.md` now gives a command and the expected numbers for every
+  row in the paper: both probes on all four bases, the controls, the raw
+  co-count, node2vec and sibling-titles ablations, the leaky graph, the
+  corpus-wide retrieval step, and the memory constraint on running the
+  embedder and the completion experiment together.
+- `build/` is gitignored: a non-editable `pip install .` writes it into the
+  source tree.
 - Report files are named for what they hold: `build_report_{split}.json`
   (was `day1_report_`) and `rank_report*.json` (was `day3_report*`).
 - Sequential-completion intervals use 1000 bootstrap resamples, like every other

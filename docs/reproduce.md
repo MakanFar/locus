@@ -115,11 +115,21 @@ export LOCUS_DATA_DIR=/path/to/lcr_arxiv LOCUS_WORK_DIR=$PWD/work
 .venv/bin/locus build pipeline --split val     # exits 1; see below
 .venv/bin/locus build graph
 .venv/bin/locus build embed-inputs --split test
-.venv/bin/locus embed --input work/embed_inputs_test.parquet \
-                      --output work/embeddings_test.parquet
+.venv/bin/locus build embed-inputs --split val
+.venv/bin/locus embed --input work/embed_inputs_test.parquet --output work/embeddings_test.parquet
+.venv/bin/locus embed --input work/embed_inputs_val.parquet  --output work/embeddings_val.parquet
 .venv/bin/locus sweep     --embeddings work/embeddings_val.parquet
 .venv/bin/locus eval rank --embeddings work/embeddings_test.parquet
+.venv/bin/locus eval swap --val-embeddings work/embeddings_val.parquet \
+                          --test-embeddings work/embeddings_test.parquet --tag specter2
 ```
+
+Both `embeddings_{val,test}.parquet` are also in the embeddings deposit
+(<https://doi.org/10.5281/zenodo.22432297>) if you would rather not run
+`locus embed`. **Expect** on Rank `0.47771` → `0.59585` (`+0.11814`) and on
+Swap `0.81617` → `0.84369` (`+0.02753`, lambda 0.2); `eval rank` also prints
+the coverage strata (Table 6) and the other-location control against the
+base on every run.
 
 **`--split val` exits 1 and that is expected.** It fails one gate —
 alignment failure 17.4% against a 15% threshold, versus 12.5% on test. Every
@@ -139,11 +149,68 @@ context windows and is therefore not redistributable:
 .venv/bin/locus eval rank --texts work/embed_inputs_test.parquet --sweep work/sweep_val_bm25.json
 ```
 
-**Expect** base MRR `0.50174` → `0.60399` (`+0.10226`).
+**Expect** base MRR `0.50174` → `0.60399` (`+0.10226`), and on Swap
+(`--val-texts`/`--test-texts` in place of the embeddings flags, `--tag bm25`)
+`0.83399` → `0.85879` (`+0.02480`, lambda 0.1).
 
-**Expected wall clock:** the two `build pipeline` runs are ~5 minutes each
-and need ~8 GB of RAM; `locus embed` is roughly one GPU-hour for both
-splits, or several hours on CPU.
+### The remaining rows of Tables 1, 2 and 7
+
+SciNCL and HAtten need their own vectors: [scoring.md](scoring.md) has the
+`locus embed --model malteos/scincl` and `locus.experiments.hatten` commands,
+and the embeddings deposit carries both for both splits. Then the same three
+commands per base, with `--out`/`--tag` so nothing overwrites the SPECTER2
+reports:
+
+```bash
+for base in scincl hatten; do
+  .venv/bin/locus sweep     --embeddings work/embeddings_${base}_val.parquet  --out work/sweep_val_$base.json
+  .venv/bin/locus eval rank --embeddings work/embeddings_${base}_test.parquet --sweep work/sweep_val_$base.json --out work/rank_report_$base.json
+  .venv/bin/locus eval swap --val-embeddings work/embeddings_${base}_val.parquet \
+      --test-embeddings work/embeddings_${base}_test.parquet --sweep work/sweep_val_$base.json --tag $base
+done
+```
+
+**Expect** Rank SciNCL `0.47019` → `0.59140` and HAtten `0.46643` → `0.57608`;
+Swap SciNCL `0.80090` → `0.83377` and HAtten `0.83073` → `0.85290`.
+
+The controls table, all on SPECTER2:
+
+```bash
+.venv/bin/locus eval rank --embeddings work/embeddings_test.parquet --slice easy --out work/rank_report_easy.json
+.venv/bin/python -m locus.eval.controls --embeddings work/embeddings_test.parquet
+.venv/bin/locus sweep     --embeddings work/embeddings_val.parquet  --assoc count --out work/sweep_val_count.json
+.venv/bin/locus eval rank --embeddings work/embeddings_test.parquet --assoc count --sweep work/sweep_val_count.json --out work/rank_report_count.json
+.venv/bin/locus build graph --splits train,val,test          # the deliberately leaky graph -> work/cocitation_full.npz
+.venv/bin/locus sweep     --embeddings work/embeddings_val.parquet  --graph work/cocitation_full.npz --out work/sweep_val_fullgraph.json
+.venv/bin/locus eval rank --embeddings work/embeddings_test.parquet --graph work/cocitation_full.npz --sweep work/sweep_val_fullgraph.json --out work/rank_report_fullgraph.json
+```
+
+**Expect** easy slice `0.65783` → `0.68738` (`+0.02956`); random anchors
+`0.47741` and degree-matched `0.47240` against the `0.47771` base; raw
+co-counts `+0.10272` at lambda 7; the leaky graph `0.80729` (`+0.32959`),
+the 2.8x inflation the paper warns about.
+
+The sibling-titles control appends the anchors' titles to the query, so it
+needs its own embeddings, and no deposit carries them:
+
+```bash
+.venv/bin/locus build embed-inputs --split val  --variant siblings
+.venv/bin/locus build embed-inputs --split test --variant siblings
+.venv/bin/locus embed --input work/embed_inputs_siblings_val.parquet  --output work/embeddings_siblings_val.parquet
+.venv/bin/locus embed --input work/embed_inputs_siblings_test.parquet --output work/embeddings_siblings_test.parquet
+.venv/bin/locus sweep     --embeddings work/embeddings_siblings_val.parquet  --out work/sweep_val_siblings.json
+.venv/bin/locus eval rank --embeddings work/embeddings_siblings_test.parquet --sweep work/sweep_val_siblings.json --out work/rank_report_siblings.json
+```
+
+**Expect** base `0.50864` → `0.60007` (`+0.09143`).
+
+**Expected wall clock and memory:** the two `build pipeline` runs are under
+a minute each on a fast disk (~5 minutes on a slow one) and need ~8 GB of
+RAM; `build graph` about 5 minutes, the leaky one 7; every sweep, rank, swap
+and control under a minute. `locus embed` is roughly one GPU-hour for both
+splits, or several hours on CPU. It holds the model and the whole input
+frame, so **run it on its own**: alongside the Tier 2 experiments on a 16 GB
+laptop the two swap each other out and neither makes progress.
 
 ## Tier 2 — the remaining experiments
 
@@ -153,14 +220,26 @@ are ever withdrawn: <https://doi.org/10.5281/zenodo.22434185> (about 2.2 GB;
 download the seven `embeddings_test_shard00*.parquet` files into
 `work/embeddings_expb_test/`).
 
+Build the memory-mapped store first: the completion runs touch only each
+location's ~2,000 candidate rows, so the resident set stays small, whereas
+loading the seven shards into RAM costs about 2.3 GB before the key index.
+Then the candidate space, the two oracle-prefetch completion runs, the
+leave-one-anchor-out pass and the anchor analysis, **one at a time**:
+
 ```bash
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test
-.venv/bin/locus exp influence  --embeddings work/embeddings_test.parquet
-.venv/bin/locus exp anchors
+.venv/bin/python -m locus.scoring.mmapstore --shards work/embeddings_expb_test      # -> work/embeddings_expb_test_mm
+.venv/bin/python -m locus.experiments.completion_inputs --split test                # candidate space from the oracle prefetch
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed --out work/expb_report_revealed.json
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed --out work/expb_report_selfseed.json
+.venv/bin/locus exp influence  --embeddings work/embeddings_test.parquet --sim-store work/embeddings_expb_test_mm --dump work/influence_rows_specter2.pkl
+.venv/bin/locus exp anchors --tag specter2
 ```
 
-**Expect** 22,274 locations in the completion experiment and 143,494
-interventions in the influence pass.
+**Expect** 22,274 locations per completion run (about 30 minutes each);
+self-seeded Recall@20 `0.26383` → `0.40162` (`+0.13779`), which is Table 3
+setting B; 143,494 interventions in the influence pass, categorised
+12,666 informative / 44,272 redundant / 86,556 non-co-cited; and
+`anchor_map_specter2.json` plus its pgfplots table for Figure 4.
 
 `exp completion` prints two tables. The first is Recall@K counting the
 revealed seed, which is what the published completion numbers are. The
@@ -174,30 +253,39 @@ revealed seed, base Recall@5 `0.13354` against `0.36023` rescored
 (`+0.22669`), and `1.00000` reachability, since the oracle prefetch
 guarantees the gold is a candidate.
 
-Add `--task` to retrieve corpus-wide instead of reranking that prefetch:
+Corpus-wide retrieval replaces the oracle prefetch with the top 2,000
+papers by cosine over the whole store; the retrieval step writes the task
+file the completion runs then take through `--task`:
 
 ```bash
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test \
-    --task work/expb_task_test_corpuswide.jsonl --out work/expb_corpuswide.json
+.venv/bin/python -m locus.scoring.retrieve --store work/embeddings_expb_test_mm --k 2000   # -> expb_task_test_corpuswide.jsonl, retrieve_report_test.json
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed \
+    --task work/expb_task_test_corpuswide.jsonl --out work/expb_report_corpuswide.json
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed \
+    --task work/expb_task_test_corpuswide.jsonl --out work/expb_report_revealed_corpuswide.json
 ```
 
-Both commands load the seven shards into RAM, which is about 2.3 GB before
-the key index. If that does not fit, build a memory-mapped store once and
-pass its prefix instead -- the scorer picks the mmap path automatically when
-`<prefix>_index.json` is present:
+**Expect** first-stage recall over 67,492 gold citations of `0.31333` at
+k=100 and `0.68381` at k=2000; self-seeded Recall@20 `0.19377` → `0.28915`
+(`+0.09538`), which is Table 3 setting C; and, on the remaining members with
+a revealed seed, `0.10043` against `0.25945` at Recall@5 with a reachability
+of `0.69344` -- corpus-wide the gold is not guaranteed to be retrieved at
+all, and that ceiling binds both arms equally.
+
+The node2vec rows replace PPMI with a learned graph embedding. The paper's
+row uses `p = 1, q = 8`, selected by validation MRR over
+`q in {0.5, 1, 2, 4, 8}`; each `(p, q)` is one training run and one sweep:
 
 ```bash
-.venv/bin/python -m locus.scoring.mmapstore --shards work/embeddings_expb_test
+.venv/bin/python -m locus.scoring.node2vec --p 1 --q 8                     # -> work/node2vec_p1q8_{vectors.npy,index.json}
+.venv/bin/locus sweep     --embeddings work/embeddings_val.parquet  --assoc node2vec --vectors work/node2vec_p1q8 --out work/sweep_val_node2vec.json
+.venv/bin/locus eval rank --embeddings work/embeddings_test.parquet --assoc node2vec --vectors work/node2vec_p1q8 --sweep work/sweep_val_node2vec.json --out work/rank_report_node2vec.json
+.venv/bin/locus eval swap --val-embeddings work/embeddings_val.parquet --test-embeddings work/embeddings_test.parquet \
+    --assoc node2vec --vectors work/node2vec_p1q8 --sweep work/sweep_val_node2vec.json --tag node2vec
 ```
 
-That writes the prefix `work/embeddings_expb_test_mm`; pass it as
-`--embeddings` and the resident set becomes the pages actually read (each
-location touches only its own ~2,000 candidate rows) rather than the whole
-matrix. The numbers are identical either way.
-
-**Expect** `0.10043` against `0.25945` at Recall@5 and a reachability of
-`0.69344` -- corpus-wide the gold is not guaranteed to be retrieved at all,
-and that ceiling binds both arms equally.
+**Expect** Rank `0.47771` → `0.49462` (`+0.01691`) at lambda 15, and on Swap
+a selected lambda of 0: the node2vec signal does not help there.
 
 ## If a number does not match
 
