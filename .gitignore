@@ -3,7 +3,9 @@ __pycache__/
 .venv/
 *.egg-info/
 work/
+docs/paper/
 dist/
 .pytest_cache/
 .DS_Store
 build/
+
