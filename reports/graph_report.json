@@ -8,7 +8,7 @@
   "leakage_overlap": 0,
   "alpha1_mismatches": 0,
   "val_determinism": true,
-  "peak_rss_gb": 0.6691131591796875,
+  "peak_rss_gb": 0.62359619140625,
   "splits": [
     "train"
   ],

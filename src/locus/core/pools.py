@@ -46,7 +46,12 @@ def build_rank_items(
             if not rec.alignment_ok:
                 drops["alignment_failed"] += 1
                 continue
-            available = sorted(all_refs - golds[rec.location])
+            # Both anchor routes are excluded, not only the cluster: a marker
+            # anchor is cited inside this window even when clustering put it
+            # at another location, so it cannot also be a wrong answer.
+            available = sorted(
+                all_refs - golds[rec.location] - rec.marker_anchors
+            )
             if len(golds) < 2:
                 drops["single_location"] += 1
                 continue

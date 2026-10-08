@@ -177,7 +177,7 @@ windows are Gu et al.'s.
 
 | File | test rows | Contents |
 |---|---:|---|
-| `locus_rank_{split}.jsonl` | 55,488 | `context_id, citing_id, gold, candidates[10], hard, headline` |
+| `locus_rank_{split}.jsonl` | 54,020 | `context_id, citing_id, gold, candidates[10], hard, headline` |
 | `locus_swap_{split}.jsonl` | 27,905 | `citing_id, ctx_a, ctx_b, gold_a, gold_b` |
 | `locus_anchors_{split}.jsonl` | 104,401 | `context_id, citing_id, location, gold, alignment_ok, anchors, anchors_clustering, anchors_marker` |
 | `locus_manifest_{split}.json` | -- | counts, frozen config, exact floors, sha256 per file |
@@ -232,9 +232,9 @@ citing paper on either split happens to have one of the unlucky counts.)
   "floors": {"pool_size": 10,
              "rank_constant_mrr": "0.2928968253968254",
              "swap_context_independent_accuracy": "0.5"},
-  "counts": {"rank_items": 55488, "swap_pairs": 27905, "contexts": 104401,
-             "citing_papers": 9208, "hard": 43372, "headline": 35701},
-  "files": {"locus_rank_test.jsonl": {"rows": 55488, "sha256": "..."}}
+  "counts": {"rank_items": 54020, "swap_pairs": 27905, "contexts": 104401,
+             "citing_papers": 9208, "hard": 42248, "headline": 34577},
+  "files": {"locus_rank_test.jsonl": {"rows": 54020, "sha256": "..."}}
 }
 ```
 

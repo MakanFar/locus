@@ -10,6 +10,14 @@ a slow one.
 | 1 | + the upstream corpus, and one GPU-hour *or* Tier 0's precomputed vectors | hours | all four bases on both probes, including BM25 |
 | 2 | + corpus-wide vectors (~2 GB) | hours | sequential completion, anchor influence, anchor analysis |
 
+`scripts/reproduce.sh` runs everything below in order, one step at a time:
+`scripts/reproduce.sh tier0` for Tier 0, `scripts/reproduce.sh all` for
+Tiers 1 and 2, or name individual stages (`--list`). It skips steps whose
+output already exists, skips with a reason those whose inputs are missing,
+and keeps each step's output in `$LOCUS_WORK_DIR/logs/`; `--dry-run` prints
+the commands without running them. The sections below are the same commands
+with the numbers each should print.
+
 ## Tier 0 — no corpus, no model, no GPU
 
 ```bash
@@ -64,10 +72,16 @@ print(m['floors']); print(m['counts'])
 |---|---|
 | Rank chance floor | `0.2928968253968254` |
 | Swap floor | `0.5`, with a zero-width bootstrap interval |
-| Rank pools (test) | 55,488 |
-| Headline pools | 35,701 |
+| Rank pools (test) | 54,020 |
+| Headline pools | 34,577 |
 | Contexts | 104,401 |
 | Citing papers | 9,208 |
+
+These counts are for the corrected pools (distractors drawn outside both
+anchor routes; see CHANGELOG). The bundle deposited as version 0.2.0 predates
+that fix and declares 55,488 rank pools and 35,701 headline pools; until the
+bundle is re-deposited, `locus fetch` returns the old pools and the Tier 0
+numbers below will not match it.
 
 These are the manifest's declared floors, not a recomputation: `fetch`
 already checked every file's sha256 against that manifest, and reading them
@@ -96,8 +110,8 @@ then:
     --graph      work/release/cocitation_train.npz
 ```
 
-**Expect:** MRR `0.47771` → `0.59585` (`+0.11814`, [+0.11062, +0.12601]) and
-R@1 `0.28051` → `0.43124` (`+0.15072`).
+**Expect:** MRR `0.49672` → `0.62054` (`+0.12382`, [+0.11594, +0.13247]) and
+R@1 `0.30307` → `0.45956` (`+0.15648`).
 
 `verify` reads `locus_rank_test.jsonl` and `locus_anchors_test.jsonl` and
 never opens the index pickle or any corpus text. That is enforced, not
@@ -126,8 +140,9 @@ export LOCUS_DATA_DIR=/path/to/lcr_arxiv LOCUS_WORK_DIR=$PWD/work
 
 Both `embeddings_{val,test}.parquet` are also in the embeddings deposit
 (<https://doi.org/10.5281/zenodo.22432297>) if you would rather not run
-`locus embed`. **Expect** on Rank `0.47771` → `0.59585` (`+0.11814`) and on
-Swap `0.81617` → `0.84369` (`+0.02753`, lambda 0.2); `eval rank` also prints
+`locus embed`. **Expect** on Rank `0.49672` → `0.62054` (`+0.12382`, with
+alpha 0.75, lambda 3.0 selected on val) and on Swap `0.81602` → `0.84358`
+(`+0.02755`, lambda 0.2); `eval rank` also prints
 the coverage strata (Table 6) and the other-location control against the
 base on every run.
 
@@ -136,8 +151,8 @@ alignment failure 17.4% against a 15% threshold, versus 12.5% on test. Every
 artefact is still written; the gate verdict comes after every `pickle.dump`.
 The failures never reach a pool (all 19,585 are dropped by
 `build_rank_items`), val and test share zero citing papers and zero
-contexts, and the surviving val headline set is shaped like test's — 31,402
-items across 2,074 papers, hard fraction 78.36% against test's 78.16%. The
+contexts, and the surviving val headline set is shaped like test's — 30,177
+items across 1,899 papers, hard fraction 78.44% against test's 78.21%. The
 gate was left as it is because it reports something true.
 
 BM25 lives at this tier, not Tier 0, because it reads
@@ -146,12 +161,12 @@ context windows and is therefore not redistributable:
 
 ```bash
 .venv/bin/locus sweep     --texts work/embed_inputs_val.parquet  --out work/sweep_val_bm25.json
-.venv/bin/locus eval rank --texts work/embed_inputs_test.parquet --sweep work/sweep_val_bm25.json
+.venv/bin/locus eval rank --texts work/embed_inputs_test.parquet --sweep work/sweep_val_bm25.json --out work/rank_report_bm25.json
 ```
 
-**Expect** base MRR `0.50174` → `0.60399` (`+0.10226`), and on Swap
+**Expect** base MRR `0.52212` → `0.62579` (`+0.10366`), and on Swap
 (`--val-texts`/`--test-texts` in place of the embeddings flags, `--tag bm25`)
-`0.83399` → `0.85879` (`+0.02480`, lambda 0.1).
+`0.83404` → `0.85884` (`+0.02480`, lambda 0.1).
 
 ### The remaining rows of Tables 1, 2 and 7
 
@@ -170,8 +185,8 @@ for base in scincl hatten; do
 done
 ```
 
-**Expect** Rank SciNCL `0.47019` → `0.59140` and HAtten `0.46643` → `0.57608`;
-Swap SciNCL `0.80090` → `0.83377` and HAtten `0.83073` → `0.85290`.
+**Expect** Rank SciNCL `0.49028` → `0.61463` and HAtten `0.48009` → `0.59699`;
+Swap SciNCL `0.80089` → `0.83369` and HAtten `0.83073` → `0.85313`.
 
 The controls table, all on SPECTER2:
 
@@ -185,9 +200,22 @@ The controls table, all on SPECTER2:
 .venv/bin/locus eval rank --embeddings work/embeddings_test.parquet --graph work/cocitation_full.npz --sweep work/sweep_val_fullgraph.json --out work/rank_report_fullgraph.json
 ```
 
-**Expect** easy slice `0.65783` → `0.68738` (`+0.02956`); random anchors
-`0.47741` and degree-matched `0.47240` against the `0.47771` base; raw
-co-counts `+0.10272` at lambda 7; the leaky graph `0.80729` (`+0.32959`),
+The appendix compares the hard and easy gains, and a ratio or difference of
+two separately bootstrapped means has no interval of its own, so the
+comparison is scored once more with one paper-level bootstrap over both
+slices:
+
+```bash
+.venv/bin/python scripts/hard_easy_contrast.py --embeddings work/embeddings_test.parquet --out work/hard_easy_contrast_specter2.json
+```
+
+**Expect** hard `+0.12382` [+0.11594, +0.13247] against easy `+0.02183`
+[+0.00974, +0.03324]; difference `+0.10198` [+0.08937, +0.11440]; ratio
+`5.67` [3.75, 11.86].
+
+**Expect** easy slice `0.68017` → `0.70200` (`+0.02183`); random anchors
+`0.49646` and degree-matched `0.49260` against the `0.49672` base; raw
+co-counts `+0.11083` at lambda 5; the leaky graph `0.84789` (`+0.35117`),
 the 2.8x inflation the paper warns about.
 
 The sibling-titles control appends the anchors' titles to the query, so it
@@ -202,7 +230,7 @@ needs its own embeddings, and no deposit carries them:
 .venv/bin/locus eval rank --embeddings work/embeddings_siblings_test.parquet --sweep work/sweep_val_siblings.json --out work/rank_report_siblings.json
 ```
 
-**Expect** base `0.50864` → `0.60007` (`+0.09143`).
+**Expect** base `0.55425` → `0.63291` (`+0.07866`).
 
 **Expected wall clock and memory:** the two `build pipeline` runs are under
 a minute each on a fast disk (~5 minutes on a slow one) and need ~8 GB of
@@ -229,29 +257,29 @@ leave-one-anchor-out pass and the anchor analysis, **one at a time**:
 ```bash
 .venv/bin/python -m locus.scoring.mmapstore --shards work/embeddings_expb_test      # -> work/embeddings_expb_test_mm
 .venv/bin/python -m locus.experiments.completion_inputs --split test                # candidate space from the oracle prefetch
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed --out work/expb_report_revealed.json
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed --out work/expb_report_selfseed.json
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed --standardize none --out work/expb_report_revealed.json
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed --standardize none --out work/expb_report_selfseed.json
 .venv/bin/locus exp influence  --embeddings work/embeddings_test.parquet --sim-store work/embeddings_expb_test_mm --dump work/influence_rows_specter2.pkl
 .venv/bin/locus exp anchors --tag specter2
 ```
 
-**Expect** 22,274 locations per completion run (about 30 minutes each);
-self-seeded Recall@20 `0.26383` → `0.40162` (`+0.13779`), which is Table 3
-setting B; 143,494 interventions in the influence pass, categorised
-12,666 informative / 44,272 redundant / 86,556 non-co-cited; and
+**Expect** 22,274 locations per completion run (about 7-30 minutes each);
+self-seeded Recall@20 `0.26383` → `0.38557` (`+0.12174`), which is Table 3
+setting B; 136,888 interventions in the influence pass, categorised
+11,556 informative / 43,415 redundant / 81,917 non-co-cited; and
 `anchor_map_specter2.json` plus its pgfplots table for Figure 4.
 
 `exp completion` prints two tables. The first is Recall@K counting the
 revealed seed, which is what the published completion numbers are. The
 second scores the same runs over `G(l)` minus that seed -- the members the
 system still has to find -- because the first hands every arm `1/|G(l)|` for
-free and 56.6% of locations have `|G(l)| = 2`. The base is z-scored over
-the location's candidate list (`--standardize zscore`, the default and the
-scale lambda was selected on; `--standardize none` reproduces the raw-cosine
-numbers of earlier drafts). **Expect**, on the remaining members with a
-revealed seed, base Recall@5 `0.13354` against `0.36023` rescored
-(`+0.22669`), and `1.00000` reachability, since the oracle prefetch
-guarantees the gold is a candidate.
+free and 56.6% of locations have `|G(l)| = 2`. The paper's sequential-completion numbers use the raw cosine
+as the base (`--standardize none`); the default `--standardize zscore`
+z-scores the base over the location's candidate list, which is Eq. 1's scale
+and gives slightly larger gains (self-seeded Recall@20 `0.39964`). **Expect**,
+on the remaining members with a revealed seed, base Recall@5 `0.13354`
+against `0.32891` rescored (`+0.19537`), and `1.00000` reachability, since
+the oracle prefetch guarantees the gold is a candidate.
 
 Corpus-wide retrieval replaces the oracle prefetch with the top 2,000
 papers by cosine over the whole store; the retrieval step writes the task
@@ -259,16 +287,16 @@ file the completion runs then take through `--task`:
 
 ```bash
 .venv/bin/python -m locus.scoring.retrieve --store work/embeddings_expb_test_mm --k 2000   # -> expb_task_test_corpuswide.jsonl, retrieve_report_test.json
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed \
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode selfseed --standardize none \
     --task work/expb_task_test_corpuswide.jsonl --out work/expb_report_corpuswide.json
-.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed \
+.venv/bin/locus exp completion --embeddings work/embeddings_expb_test_mm --mode revealed --standardize none \
     --task work/expb_task_test_corpuswide.jsonl --out work/expb_report_revealed_corpuswide.json
 ```
 
 **Expect** first-stage recall over 67,492 gold citations of `0.31333` at
-k=100 and `0.68381` at k=2000; self-seeded Recall@20 `0.19377` → `0.28915`
-(`+0.09538`), which is Table 3 setting C; and, on the remaining members with
-a revealed seed, `0.10043` against `0.25945` at Recall@5 with a reachability
+k=100 and `0.68381` at k=2000; self-seeded Recall@20 `0.19377` → `0.26872`
+(`+0.07495`), which is Table 3 setting C; and, on the remaining members with
+a revealed seed, `0.10043` against `0.23085` at Recall@5 with a reachability
 of `0.69344` -- corpus-wide the gold is not guaranteed to be retrieved at
 all, and that ceiling binds both arms equally.
 
@@ -284,8 +312,15 @@ row uses `p = 1, q = 8`, selected by validation MRR over
     --assoc node2vec --vectors work/node2vec_p1q8 --sweep work/sweep_val_node2vec.json --tag node2vec
 ```
 
-**Expect** Rank `0.47771` → `0.49462` (`+0.01691`) at lambda 15, and on Swap
-a selected lambda of 0: the node2vec signal does not help there.
+**Expect** Rank `0.49672` → `0.54192` (`+0.04519`) at lambda 30, and on Swap
+a selected lambda of 0: the node2vec signal does not help there. The other
+four `q` values (`--q 0.5`, `1`, `2`, `4`) score lower on validation
+(`0.53477`, `0.53772`, `0.53866`, `0.54046` against `0.54134` at `q = 8`) and
+also select lambda 0 on Swap. The appendix's node2vec-in-completion sentence
+is `locus exp completion --assoc node2vec --vectors work/node2vec_p1q8
+--sweep work/sweep_val_node2vec.json --standardize none` in the three
+settings: **expect** Recall@20 deltas of `+0.00068` (revealed seed, interval
+includes zero), `-0.07285` (self-seeded) and `-0.05385` (corpus-wide).
 
 ## If a number does not match
 
@@ -306,5 +341,6 @@ These exist and are tested, but no number in the paper comes from them:
 node2vec null control (`python -m locus.scoring.node2vec --null-control`),
 `locus build graph --splits train,val,test` (the deliberately leaky graph
 behind the leakage row of the controls table), and
-`locus exp completion --standardize none` (the raw-cosine base of earlier
-drafts). Treat their outputs as ablations, not as reproductions.
+`locus exp completion --standardize zscore` (Eq. 1's z-scored base in
+sequential completion; the paper reports the raw-cosine base). Treat their
+outputs as ablations, not as reproductions.

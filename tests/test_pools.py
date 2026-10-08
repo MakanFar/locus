@@ -45,6 +45,29 @@ class TestRankItems:
             distractors = set(it.candidates) - {it.gold}
             assert not (distractors & golds_by_loc[own_loc])
 
+    def test_distractors_never_include_a_marker_anchor(self):
+        # A paper the marker route places in this window but clustering put
+        # at another location is an anchor of the pool, not a distractor.
+        index = _paper_with(8, 2)
+        other = {r.refid for r in index["P"] if r.location != 0}
+        marked = frozenset(sorted(other)[:6])
+        index["P"][0] = replace(index["P"][0], marker_anchors=marked)
+        items, _ = build_rank_items(index, pool_size=5, seed=0)
+        (it,) = [i for i in items if i.context_id == index["P"][0].context_id]
+        assert not (set(it.candidates) & marked)
+        assert len(it.candidates) == 5
+
+    def test_marker_anchors_count_against_the_distractor_supply(self):
+        # 6 locations x 1 ref = 5 off-location refs; two are marker anchors,
+        # leaving 3 < 4.
+        index = _paper_with(6, 1)
+        index["P"][0] = replace(
+            index["P"][0], marker_anchors=frozenset({"1", "2"})
+        )
+        items, drops = build_rank_items(index, pool_size=5, seed=0)
+        assert all(i.context_id != index["P"][0].context_id for i in items)
+        assert drops["too_few_distractors"] == 1
+
     def test_papers_with_too_few_distractors_are_dropped(self):
         # 2 locations x 1 ref = 1 available distractor, need 4
         items, drops = build_rank_items(_paper_with(2, 1), pool_size=5, seed=0)

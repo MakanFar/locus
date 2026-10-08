@@ -22,6 +22,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `locus embed --revision`, with per-model pins (`MODEL_REVISIONS`) so
   `--model malteos/scincl` no longer loads at SPECTER2's commit.
 
+- `scripts/reproduce.sh`: every command in `docs/reproduce.md` as one
+  resumable script, by stage (`tier0`, `all`, or named stages).
+- `scripts/hard_easy_contrast.py`: the hard-versus-easy gain comparison with
+  one paper-level bootstrap over both slices, so the difference and ratio of
+  the two gains carry intervals of their own (`reports/hard_easy_contrast_specter2.json`).
+
 ### Changed
 - `docs/reproduce.md` now gives a command and the expected numbers for every
   row in the paper: both probes on all four bases, the controls, the raw
@@ -34,6 +40,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (was `day1_report_`) and `rank_report*.json` (was `day3_report*`).
 - Sequential-completion intervals use 1000 bootstrap resamples, like every other
   interval in the paper (was 500).
+
+### Fixed
+- LOCUS-Rank distractors are now drawn outside both anchor routes. They were
+  drawn outside the location's cluster only, so a paper the marker route
+  places in the target's window could be a distractor and one of the pool's
+  anchors at once (22.9% of test headline pools). The frozen pools, the
+  export, `reports/`, the golden digest and every expected number in
+  `docs/reproduce.md` were regenerated: 54,020 test rank items (was 55,488),
+  34,577 headline pools (was 35,701), headline MRR 0.49672 -> 0.62054
+  (+0.12382; was 0.47771 -> 0.59585). Validation now selects alpha 0.75,
+  lambda 3.0 for SPECTER2, which `locus verify` takes as its defaults. The
+  deposited 0.2.0 bundle and embeddings predate the fix.
+- `reports/expb_report_*.json` are now the `--standardize none` runs, which is
+  the setting the paper's sequential-completion numbers come from; the
+  `zscore` default remains available as an ablation.
 
 ### Removed
 - `CITATION.cff`: citation metadata is deferred until the paper has a

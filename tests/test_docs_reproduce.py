@@ -45,7 +45,7 @@ def test_every_count_the_guide_quotes_matches_the_manifest(manifest):
 
 def test_the_headline_result_is_quoted_exactly():
     doc = DOC.read_text()
-    for number in ("0.47771", "0.59585", "+0.11814"):
+    for number in ("0.49672", "0.62054", "+0.12382"):
         assert number in doc
 
 

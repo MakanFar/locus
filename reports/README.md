@@ -17,7 +17,9 @@ no identifiers, no text. Paths inside them have been reduced to file names.
 | Table 7, easy row | `rank_report_easy.json` | `gate1_primary` |
 | Table 7, other location | `rank_report.json` | `other_location_vs_base`, `gate2_other_location_control` |
 | Table 7, random / degree-matched | `controls_specter2.json` | `arms.*.vs_base` |
+| Appendix B, hard-versus-easy difference and ratio with joint CIs | `hard_easy_contrast_specter2.json` | `joint.difference`, `joint.ratio`, `joint.within_paper` |
 | Table 7, raw co-count / node2vec / sibling titles / leaky graph | `rank_report_{count,node2vec,siblings,fullgraph}.json` | `gate1_primary` |
+| Appendix, node2vec in sequential completion | `expb_report_n2v_{revealed,selfseed,corpuswide}_none.json` | `deltas.hybrid_retrieved.20` |
 | Figure 3 | `expb_report_selfseed.json` | `information_state` (`n_anchors`, `n_correct`, `p_next_correct`) |
 | Figure 4 | `anchor_map_specter2.json`, `anchor_map_specter2.pgf.txt` | `xe`, `ye`, `grid` |
 | §3.2 anchor routes, §3.3 counts | `build_report_test.json` | `anchor_ge1_{clustering,marker,union}`, `alignment_failure` |
@@ -40,6 +42,7 @@ Only runs that back a number in the paper are kept: the aggregator ablations
 selected `sweep_val_node2vec.json` are omitted; `docs/reproduce.md` lists how
 to rerun them.
 
-`expb_report_*.json` were produced with `--standardize zscore` (the default)
-and 1000 bootstrap resamples; `rank_report_fullgraph.json` is the
+`expb_report_*.json` were produced with `--standardize none` (the raw-cosine
+base the paper's sequential-completion numbers use; the `zscore` default is
+Eq. 1's scale and gives slightly larger gains) and 1000 bootstrap resamples; `rank_report_fullgraph.json` is the
 deliberately leaky control and `graph_report_full.json` its build report.

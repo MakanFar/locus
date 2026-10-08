@@ -25,10 +25,10 @@ from locus.eval import verify
 pytestmark = pytest.mark.equivalence
 
 # From the module docstring of locus.eval.verify and from rank_report.json:
-# test split, SPECTER2, alpha=0.5, min_count=1, lambda=4.0.
+# test split, SPECTER2, alpha=0.75, min_count=1, lambda=3.0.
 EXPECTED = {
-    "MRR": "MRR      0.47771   0.59585  +0.11814   [+0.11062, +0.12601]",
-    "R@1": "R@1      0.28051   0.43124  +0.15072   [+0.14051, +0.16115]",
+    "MRR": "MRR      0.49672   0.62054  +0.12382   [+0.11594, +0.13247]",
+    "R@1": "R@1      0.30307   0.45956  +0.15648   [+0.14605, +0.16773]",
 }
 
 
@@ -45,9 +45,9 @@ def headline_metrics(work_dir):
         embeddings=embeddings,
         graph=graph,
         split="test",
-        alpha=0.5,
+        alpha=0.75,
         min_count=1,
-        lam=4.0,
+        lam=3.0,
     )
 
 
