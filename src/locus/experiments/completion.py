@@ -284,6 +284,20 @@ def run_location(loc, scorer, ppmi, graph, bins, lam, seed, arm, base=None,
     return recalls
 
 
+def run_header(*, split: str, mode: str, task_path: Path, locations: int,
+               seeds: int, assoc: str, selected: dict, standardize: str) -> dict:
+    """What a completion report says about the run that produced it.
+
+    The task is recorded by file name only: reports are published, and an
+    absolute path names a home directory.
+    """
+    return {"split": split, "mode": mode, "task": Path(task_path).name,
+            "locations": locations, "seeds": seeds,
+            "assoc": assoc, "selected": selected, "lambda": selected["lambda"],
+            "standardize": standardize, "averaging": "paper", "n_boot": N_BOOT,
+            "arms": {}, "deltas": {}}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split", default="test")
@@ -357,10 +371,6 @@ def main(argv: list[str] | None = None) -> int:
     reach: list[float] = []
     sizes: list[int] = []
     groups: list[str] = []
-    # Keyed by the anchor state the arm held ENTERING a step, so the curve
-    # answers "given t anchors of which c were right, how often is the next
-    # pick right" -- not the tautology "correct picks follow correct picks".
-    curve: dict[tuple[int, int], list[int]] = {}
     seed_quality: dict[bool, list[float]] = {True: [], False: []}
     for seed in range(args.seeds):
         for i, loc in enumerate(iter_locations()):
@@ -376,16 +386,11 @@ def main(argv: list[str] | None = None) -> int:
                     per_arm[arm][k].append(r[k])
                     if r.remaining is not None:
                         per_rem[arm][k].append(r.remaining[k])
-                if trace:
-                    for t in trace:
-                        curve.setdefault(
-                            (t["n_anchors"], t["n_correct"]), []
-                        ).append(int(t["correct"]))
-                    # In selfseed mode the seed IS the first pick, so its
-                    # correctness is the seed quality. In revealed mode the
-                    # seed is true by construction and the stratum is empty.
-                    if not reveal:
-                        seed_quality[trace[0]["correct"]].append(r[max(KS)])
+                # In selfseed mode the seed IS the first pick, so its
+                # correctness is the seed quality. In revealed mode the seed
+                # is true by construction and the stratum is empty.
+                if trace and not reveal:
+                    seed_quality[trace[0]["correct"]].append(r[max(KS)])
             if reveal and len(loc["gold"]) > 1:
                 cands = set(loc["candidates"])
                 revealed = revelation_order(
@@ -400,11 +405,9 @@ def main(argv: list[str] | None = None) -> int:
             if i and i % 500 == 0:
                 print(f"  seed {seed}: {i}/{n_locs}", flush=True)
 
-    report = {"split": args.split, "mode": args.mode,
-              "task": str(task_path), "locations": n_locs,
-              "seeds": args.seeds, "lambda": lam,
-              "standardize": args.standardize, "n_boot": N_BOOT,
-              "arms": {}, "deltas": {}}
+    report = run_header(split=args.split, mode=args.mode, task_path=task_path,
+                        locations=n_locs, seeds=args.seeds, assoc=args.assoc,
+                        selected=sel, standardize=args.standardize)
     print(f"\n{'arm':<18} " + "  ".join(f"R@{k}".rjust(8) for k in KS))
     for arm in ARMS:
         vals = {k: paper_mean(per_arm[arm][k], groups) for k in KS}
@@ -471,19 +474,6 @@ def main(argv: list[str] | None = None) -> int:
             report["deltas"][arm][k] = {"delta": m, "ci": [lo, hi]}
             if k in (1, 5, 20):
                 print(f"{arm:<20} {k:>3} {m:>+10.5f}  [{lo:+.5f}, {hi:+.5f}]")
-
-    # Completion accuracy as a function of the information state (the
-    # seed-quality / information-state curve). Strata with too few
-    # observations are dropped rather than reported at high variance.
-    report["information_state"] = [
-        {"n_anchors": t, "n_correct": c, "steps": len(v),
-         "p_next_correct": sum(v) / len(v)}
-        for (t, c), v in sorted(curve.items()) if len(v) >= 200
-    ]
-    print(f"\n{'anchors':>8} {'correct':>8} {'steps':>9} {'P(next ok)':>11}")
-    for row in report["information_state"][:16]:
-        print(f"{row['n_anchors']:>8} {row['n_correct']:>8} "
-              f"{row['steps']:>9} {row['p_next_correct']:>11.5f}")
 
     if not reveal:
         report["seed_quality"] = {

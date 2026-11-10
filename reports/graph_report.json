@@ -12,7 +12,6 @@
   "splits": [
     "train"
   ],
-  "leaky_by_design": false,
   "corpus": null,
   "failures": [],
   "scale_notes": []

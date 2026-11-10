@@ -63,3 +63,21 @@ def test_build_pools_rejects_an_unknown_slice():
     from locus.eval.sweep import build_pools
     with pytest.raises(ValueError, match="unknown slice"):
         build_pools("test", Path("/nonexistent"), "hard")
+
+
+def test_anchor_route_selects_one_evidence_route_or_their_union():
+    # A(l) has two non-nested routes. The headline uses the union; the route
+    # ablation needs each alone, from the same record, without touching pools.
+    from locus.core.types import ContextRec, anchors_for, gold_sets
+    recs = [
+        ContextRec("c1", "P", "t", "", "", location=0, marker_anchors=frozenset({"m", "s"})),
+        ContextRec("c2", "P", "s", "", "", location=0),
+        ContextRec("c3", "P", "far", "", "", location=1),
+    ]
+    golds = gold_sets(recs)
+    assert anchors_for(recs[0], golds, "clustering") == {"s"}
+    assert anchors_for(recs[0], golds, "marker") == {"m", "s"}
+    assert anchors_for(recs[0], golds, "union") == {"m", "s"}
+    assert anchors_for(recs[2], golds, "marker") == set()
+    with pytest.raises(ValueError, match="route"):
+        anchors_for(recs[0], golds, "nearest")

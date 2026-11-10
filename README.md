@@ -44,7 +44,7 @@ build` or `locus verify` fails and it isn't obvious why.
                                  `--texts` scores the same pools with BM25
     locus sweep                  sweep lambda on val
     locus verify                 recompute the headline from an export
-    locus exp {completion,influence,anchors}
+    locus exp {completion,influence,anchors,proximity,theta,annotation-sample}
 
 
 

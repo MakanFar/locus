@@ -15,12 +15,15 @@
 #   build       pools, hardness, headline set, co-citation graph, embed inputs
 #   embed       SPECTER2 and SciNCL vectors (HAtten too, if its checkpoint is given)
 #   rank        Tables 1 and 2: sweep, Rank and Swap for SPECTER2, SciNCL, HAtten, BM25
-#   controls    Table 7: easy slice, random/degree-matched anchors, raw counts, leaky graph
-#   siblings    Table 7: sibling-titles control (embeds its own inputs)
-#   node2vec    Table 7 and the appendix: node2vec association, with its q grid
-#   completion  Table 3 A/B, Figures 3 and 4: sequential completion, influence, anchors,
-#               and node2vec in completion
-#   corpuswide  Table 3 C: completion over corpus-wide retrieval
+#   controls    Tables 10 and 7: easy slice, random/degree-matched anchors, raw counts,
+#               the anchor-route ablation and anchor proximity
+#   siblings    Table 10: sibling-titles control (embeds its own inputs)
+#   node2vec    Table 10 and the appendix: node2vec association, with its q grid
+#   completion  Table 3 A/B, Table 4 and Figure 3: sequential completion, influence,
+#               anchors, and node2vec in completion
+#   corpuswide  Table 3 C/D and Table 4: completion over corpus-wide retrieval
+#   theta       sensitivity of the headline to the clustering threshold: four
+#               rebuilt work directories (about an hour) and one comparison
 #   export      the release files, round-tripped and checked against the floors
 #
 # Environment:
@@ -42,7 +45,7 @@
 set -u
 cd "$(dirname "$0")/.."
 
-ALL_STAGES="build embed rank controls siblings node2vec completion corpuswide export"
+ALL_STAGES="build embed rank controls siblings node2vec completion corpuswide theta export"
 
 DRY=0
 FORCE=0
@@ -54,7 +57,7 @@ for arg in "$@"; do
     --list) echo "tier0 $ALL_STAGES" | tr ' ' '\n'; exit 0 ;;
     -h|--help) sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     all) STAGES="$STAGES $ALL_STAGES" ;;
-    tier0|build|embed|rank|controls|siblings|node2vec|completion|corpuswide|export)
+    tier0|build|embed|rank|controls|siblings|node2vec|completion|corpuswide|theta|export)
       STAGES="$STAGES $arg" ;;
     *) echo "unknown argument: $arg (try --help)" >&2; exit 2 ;;
   esac
@@ -164,6 +167,9 @@ stage_build() {
   step graph "$W/cocitation_train.npz" "$LOCUS" build graph
   step embed-inputs-test "$W/embed_inputs_test.parquet" "$LOCUS" build embed-inputs --split test
   step embed-inputs-val "$W/embed_inputs_val.parquet" "$LOCUS" build embed-inputs --split val
+  # The pairs two annotators label (docs/annotation_protocol.md); index only.
+  step annotation-sample "$W/annotation/manifest.json" \
+    "$LOCUS" exp annotation-sample --out "$W/annotation"
 }
 
 stage_embed() {
@@ -236,24 +242,21 @@ stage_controls() {
   step hard-easy-contrast "$W/hard_easy_contrast_specter2.json" \
     "$PYTHON" scripts/hard_easy_contrast.py --embeddings "$test" \
       --out "$W/hard_easy_contrast_specter2.json"
+  # Robustness of the location inference: one anchor route at a time, and
+  # anchors by how close their marker is to the target's.
+  local route
+  for route in marker clustering; do
+    step "rank-route-$route" "$W/rank_report_route_$route.json" \
+      "$LOCUS" eval rank --embeddings "$test" --anchor-route "$route" \
+        --out "$W/rank_report_route_$route.json"
+  done
+  step proximity "$W/proximity_specter2.json" \
+    "$LOCUS" exp proximity --embeddings "$test" --out "$W/proximity_specter2.json"
   step sweep-count "$W/sweep_val_count.json" \
     "$LOCUS" sweep --embeddings "$val" --assoc count --out "$W/sweep_val_count.json" \
   && step rank-count "$W/rank_report_count.json" \
     "$LOCUS" eval rank --embeddings "$test" --assoc count \
       --sweep "$W/sweep_val_count.json" --out "$W/rank_report_count.json"
-  # The deliberately leaky graph: val and test citations counted in.
-  if [ -z "${LOCUS_DATA_DIR:-}" ] && [ ! -e "$W/cocitation_full.npz" ] && [ "$DRY" = 0 ]; then
-    echo "--- skip graph-full: LOCUS_DATA_DIR is not set"
-    note skipped "graph-full, rank-fullgraph (LOCUS_DATA_DIR not set)"
-    return 0
-  fi
-  step graph-full "$W/cocitation_full.npz" "$LOCUS" build graph --splits train,val,test \
-  && step sweep-fullgraph "$W/sweep_val_fullgraph.json" \
-    "$LOCUS" sweep --embeddings "$val" --graph "$W/cocitation_full.npz" \
-      --out "$W/sweep_val_fullgraph.json" \
-  && step rank-fullgraph "$W/rank_report_fullgraph.json" \
-    "$LOCUS" eval rank --embeddings "$test" --graph "$W/cocitation_full.npz" \
-      --sweep "$W/sweep_val_fullgraph.json" --out "$W/rank_report_fullgraph.json"
 }
 
 stage_siblings() {
@@ -363,6 +366,49 @@ stage_corpuswide() {
   step n2v-completion-corpuswide "$W/expb_report_n2v_corpuswide_none.json" \
     "$LOCUS" exp completion --embeddings "$mm" --mode selfseed --standardize none $n2v \
       --task "$task" --out "$W/expb_report_n2v_corpuswide_none.json"
+}
+
+stage_theta() {
+  # Everything downstream of the clustering is rebuilt per threshold in its
+  # own work directory; vectors are reused from the published ones and only
+  # the rows they lack are embedded. A sensitivity analysis, not a way to
+  # choose theta.
+  local t split dirs=""
+  need theta "$W/embeddings_val.parquet" "$W/embeddings_test.parquet" "$W/sweep_val.json" \
+    "$W/cocitation_train.npz" || return 0
+  if [ -z "${LOCUS_DATA_DIR:-}" ] && [ "$DRY" = 0 ]; then
+    echo "--- skip theta: LOCUS_DATA_DIR is not set"
+    note skipped "theta (LOCUS_DATA_DIR not set)"
+    return 0
+  fi
+  for t in 0.3 0.4 0.6 0.7; do
+    local d="$W/theta_$t"
+    mkdir -p "$d"
+    step "theta-$t-pipeline-test" "$d/build_report_test.json" \
+      env LOCUS_WORK_DIR="$d" "$LOCUS" build pipeline --split test --theta "$t" || continue
+    OK_CODES="0 1"
+    step "theta-$t-pipeline-val" "$d/build_report_val.json" \
+      env LOCUS_WORK_DIR="$d" "$LOCUS" build pipeline --split val --theta "$t" || continue
+    step "theta-$t-graph" "$d/cocitation_train.npz" \
+      env LOCUS_WORK_DIR="$d" "$LOCUS" build graph --theta "$t" || continue
+    for split in val test; do
+      step "theta-$t-embed-inputs-$split" "$d/embed_inputs_$split.parquet" \
+        env LOCUS_WORK_DIR="$d" "$LOCUS" build embed-inputs --split "$split" || continue 2
+      step "theta-$t-embed-$split" "$d/embeddings_$split.parquet" \
+        "$LOCUS" embed --input "$d/embed_inputs_$split.parquet" \
+          --output "$d/embeddings_$split.parquet" --reuse "$W/embeddings_$split.parquet" || continue 2
+    done
+    step "theta-$t-sweep" "$d/sweep_val.json" \
+      env LOCUS_WORK_DIR="$d" "$LOCUS" sweep --embeddings "$d/embeddings_val.parquet" \
+        --graph "$d/cocitation_train.npz" --out "$d/sweep_val.json" || continue
+    dirs="$dirs --dir $t=$d"
+  done
+  [ -n "$dirs" ] || return 0
+  # shellcheck disable=SC2086
+  step theta-sensitivity "$W/theta_sensitivity.json" \
+    "$LOCUS" exp theta $dirs --dir "0.5=$W" \
+      --fixed-graph "$W/cocitation_train.npz" --fixed-sweep "$W/sweep_val.json" \
+      --out "$W/theta_sensitivity.json"
 }
 
 stage_export() {

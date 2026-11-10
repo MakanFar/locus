@@ -1,0 +1,138 @@
+{
+  "protocol_version": "0.3",
+  "split": "test",
+  "seed": 0,
+  "theta": 0.5,
+  "per_paper": 2,
+  "items": 400,
+  "pilot_items": 40,
+  "pairs_in_split": 1722838,
+  "cells": {
+    "both_routes/beyond": {
+      "population": 20512,
+      "quota": 20,
+      "drawn": 20
+    },
+    "both_routes/group": {
+      "population": 108141,
+      "quota": 20,
+      "drawn": 20
+    },
+    "both_routes/sentence": {
+      "population": 58283,
+      "quota": 20,
+      "drawn": 20
+    },
+    "clustering_only_aligned/all": {
+      "population": 2803,
+      "quota": 40,
+      "drawn": 40
+    },
+    "clustering_only_unaligned/all": {
+      "population": 18200,
+      "quota": 60,
+      "drawn": 60
+    },
+    "disjoint/all": {
+      "population": 1388346,
+      "quota": 20,
+      "drawn": 20
+    },
+    "marker_only/beyond": {
+      "population": 32261,
+      "quota": 35,
+      "drawn": 35
+    },
+    "marker_only/group": {
+      "population": 231,
+      "quota": 10,
+      "drawn": 10
+    },
+    "marker_only/sentence": {
+      "population": 8830,
+      "quota": 35,
+      "drawn": 35
+    },
+    "near_miss/all": {
+      "population": 19367,
+      "quota": 60,
+      "drawn": 60
+    },
+    "transitive/all": {
+      "population": 20883,
+      "quota": 60,
+      "drawn": 60
+    },
+    "weak_overlap/all": {
+      "population": 43597,
+      "quota": 20,
+      "drawn": 20
+    }
+  },
+  "pilot_cells": {
+    "both_routes/beyond": {
+      "population": 20512,
+      "quota": 2,
+      "drawn": 2
+    },
+    "both_routes/group": {
+      "population": 108141,
+      "quota": 2,
+      "drawn": 2
+    },
+    "both_routes/sentence": {
+      "population": 58283,
+      "quota": 2,
+      "drawn": 2
+    },
+    "clustering_only_aligned/all": {
+      "population": 2803,
+      "quota": 4,
+      "drawn": 4
+    },
+    "clustering_only_unaligned/all": {
+      "population": 18200,
+      "quota": 5,
+      "drawn": 5
+    },
+    "disjoint/all": {
+      "population": 1388346,
+      "quota": 4,
+      "drawn": 4
+    },
+    "marker_only/beyond": {
+      "population": 32261,
+      "quota": 2,
+      "drawn": 2
+    },
+    "marker_only/group": {
+      "population": 231,
+      "quota": 1,
+      "drawn": 1
+    },
+    "marker_only/sentence": {
+      "population": 8830,
+      "quota": 3,
+      "drawn": 3
+    },
+    "near_miss/all": {
+      "population": 19367,
+      "quota": 6,
+      "drawn": 6
+    },
+    "transitive/all": {
+      "population": 20883,
+      "quota": 5,
+      "drawn": 5
+    },
+    "weak_overlap/all": {
+      "population": 43597,
+      "quota": 4,
+      "drawn": 4
+    }
+  },
+  "unsampled_cells": {
+    "both_routes/not_in_window": 1130,
+    "marker_only/not_in_window": 254
+  }
+}

@@ -34,3 +34,22 @@ def test_a_pin_must_look_like_a_commit_prefix():
         assert len(rev) >= 7 and all(c in "0123456789abcdef" for c in rev)
     with pytest.raises(ValueError, match="revision"):
         revision_for("allenai/specter2_base", "main branch")
+
+
+def test_missing_rows_keeps_only_what_an_existing_parquet_does_not_cover():
+    # The theta sensitivity rebuild needs vectors for a few hundred contexts
+    # the published pools never contained. Re-embedding 114k texts to add 500
+    # is an hour of GPU for nothing, so the embedder can be told what already
+    # exists -- and a key counts as covered only for its own kind, because a
+    # context id and a paper id are different namespaces.
+    import polars as pl
+
+    from locus.scoring.embed import missing_rows
+
+    frame = pl.DataFrame({"key": ["p1", "p2", "c1", "c2"],
+                          "kind": ["paper", "paper", "context", "context"],
+                          "text": ["a", "b", "c", "d"]})
+    have = {("p1", "paper"), ("c2", "context"), ("p2", "context")}
+    got = missing_rows(frame, have)
+    assert got["key"].to_list() == ["p2", "c1"]
+    assert got["kind"].to_list() == ["paper", "context"]

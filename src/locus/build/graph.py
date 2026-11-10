@@ -62,13 +62,15 @@ _CHILD_SCRIPT = (
     "from locus.data.corpus import iter_papers; "
     "from locus.data.ingest import jsonl_source; "
     "corpus = sys.argv[1] or None; "
+    "theta = float(sys.argv[2]); "
     "src = jsonl_source(corpus) if corpus else None; "
-    "g = count_sites(iter_papers('val', keep_text=False, source=src)); "
+    "g = count_sites(iter_papers('val', keep_text=False, source=src, theta=theta)); "
     "print(_digest_of_graph(g))"
 )
 
 
-def _run_second_val_build(hashseed: str, corpus: str | None = None) -> str:
+def _run_second_val_build(hashseed: str, corpus: str | None = None,
+                          theta: float = config.THETA) -> str:
     """Rebuild the val CoGraph in a fresh subprocess under a different
     PYTHONHASHSEED and return its digest.
 
@@ -81,7 +83,7 @@ def _run_second_val_build(hashseed: str, corpus: str | None = None) -> str:
     env = dict(os.environ)
     env["PYTHONHASHSEED"] = hashseed
     result = subprocess.run(
-        [sys.executable, "-c", _CHILD_SCRIPT, corpus or ""],
+        [sys.executable, "-c", _CHILD_SCRIPT, corpus or "", repr(theta)],
         capture_output=True,
         text=True,
         env=env,
@@ -92,20 +94,24 @@ def _run_second_val_build(hashseed: str, corpus: str | None = None) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    # --splits exists for the train-only-vs-full leakage control, which
-    # needs a deliberately leaky graph to measure how much of the gain
-    # careless construction would have manufactured. Anything other than the
-    # default train-only build is refused a .npz under the canonical name.
-    ap.add_argument("--splits", default="train")
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument(
         "--corpus", default=None,
         help="a JSONL corpus directory (locus.data.ingest); without it the "
              "upstream corpus at $LOCUS_DATA_DIR is used",
     )
+    ap.add_argument(
+        "--theta", type=float, default=config.THETA,
+        help=f"Jaccard threshold for location clustering (default {config.THETA}). "
+             "For sensitivity analysis: co-citation sites are locations, so a "
+             "test index rebuilt at another threshold needs a graph built at "
+             "the same one.",
+    )
     args = ap.parse_args(argv)
-    splits = [x.strip() for x in args.splits.split(",")]
-    leaky_by_design = bool(set(splits) & {"val", "test"})
+    theta = args.theta
+    # Train only, always: the graph the paper scores with must never count a
+    # val or test citation, and the leakage gate below enforces it.
+    splits = ["train"]
     source = None
     if args.corpus is not None:
         from locus.data.ingest import jsonl_source
@@ -123,7 +129,7 @@ def main(argv: list[str] | None = None) -> int:
     def _tracked():
         for split in splits:
             for citing_id, recs in iter_papers(
-                split, keep_text=False, source=source
+                split, keep_text=False, source=source, theta=theta
             ):
                 counted_papers.add(citing_id)
                 yield citing_id, recs
@@ -158,14 +164,11 @@ def main(argv: list[str] | None = None) -> int:
             "those split files are populated; this does NOT mean leakage "
             "was found"
         )
-    elif overlap and not leaky_by_design:
+    elif overlap:
         failures.append(
             f"LEAKAGE: {len(overlap)} papers counted into the graph also appear "
             f"in val or test, e.g. {sorted(overlap)[:5]}"
         )
-    elif overlap:
-        print(f"      leakage EXPECTED and present ({len(overlap)} papers): this "
-              "build is the train-only-vs-full control, not a usable graph")
 
     print("[3/5] pair-instance sanity band")
     if not 1_600_000 <= instances <= 6_400_000:
@@ -199,12 +202,12 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     print("[5/5] determinism on val, across processes")
-    a = count_sites(iter_papers("val", keep_text=False, source=source))
+    a = count_sites(iter_papers("val", keep_text=False, source=source, theta=theta))
     digest_a = _digest_of_graph(a)
     # Any concrete seed differing from whatever this process happens to be
     # running under is enough to exercise a different set-iteration order.
     child_seed = "0" if os.environ.get("PYTHONHASHSEED") != "0" else "1"
-    digest_b = _run_second_val_build(child_seed, args.corpus)
+    digest_b = _run_second_val_build(child_seed, args.corpus, theta=theta)
     same = digest_a == digest_b
     print(f"      parent/child val digests match: {same}")
     if not same:
@@ -213,11 +216,7 @@ def main(argv: list[str] | None = None) -> int:
             f"mismatch under a different PYTHONHASHSEED: {digest_a} != {digest_b})"
         )
 
-    # A leaky control build must never land on the canonical filename that
-    # every scorer loads by default.
-    out = args.out or config.WORK_DIR / (
-        "cocitation_full.npz" if leaky_by_design else "cocitation_train.npz"
-    )
+    out = args.out or config.WORK_DIR / "cocitation_train.npz"
 
     peak = _peak_rss_gb()
     print(f"      peak RSS: {peak:.2f} GB")
@@ -236,13 +235,12 @@ def main(argv: list[str] | None = None) -> int:
         "val_determinism": same,
         "peak_rss_gb": peak,
         "splits": splits,
-        "leaky_by_design": leaky_by_design,
+        "theta": theta,
         "corpus": args.corpus,
         "failures": failures,
         "scale_notes": scale_notes,
     }
-    tag = "" if not leaky_by_design else "_full"
-    with open(config.WORK_DIR / f"graph_report{tag}.json", "w", encoding="utf-8") as f:
+    with open(config.WORK_DIR / "graph_report.json", "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
     if scale_notes:

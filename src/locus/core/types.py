@@ -48,6 +48,25 @@ def anchors_union(rec: ContextRec, golds: dict[int, set[str]]) -> set[str]:
     return anchors(rec, golds) | set(rec.marker_anchors)
 
 
+ANCHOR_ROUTES = ("union", "clustering", "marker")
+
+
+def anchors_for(rec: ContextRec, golds: dict[int, set[str]], route: str = "union") -> set[str]:
+    """A(l) from one evidence route, or from their union.
+
+    The headline uses the union. The single-route sets exist for the route
+    ablation: if the result holds with anchors from markers alone, location
+    clustering played no part in producing it, and vice versa.
+    """
+    if route == "union":
+        return anchors_union(rec, golds)
+    if route == "clustering":
+        return anchors(rec, golds)
+    if route == "marker":
+        return set(rec.marker_anchors) - {rec.refid}
+    raise ValueError(f"unknown anchor route {route!r}; expected one of {ANCHOR_ROUTES}")
+
+
 def clustering_disagreement(rec: ContextRec, golds: dict[int, set[str]]) -> int:
     """Marker-derived anchors that clustering did NOT place at this location.
 

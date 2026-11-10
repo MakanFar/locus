@@ -90,3 +90,21 @@ def test_merge_topk_keeps_the_best_not_the_first():
     bs, bi = merge_topk(bs, bi, np.array([[0.5]], dtype=np.float32),
                         np.array([[12]], dtype=np.int64), k=2)
     assert sorted(bi[0].tolist()) == [10, 12]
+
+
+def test_top_k_vectors_matches_brute_force_for_arbitrary_query_vectors():
+    # `top_k` looks its queries up in the store's own context table. The
+    # corpus-scale Rank experiment queries with vectors the store does not
+    # hold (headline contexts, target papers), so the search itself has to be
+    # available on a plain matrix -- and agree with an exhaustive sort.
+    import numpy as np
+
+    from locus.scoring.retrieve import top_k_vectors
+
+    rng = np.random.default_rng(0)
+    docs = rng.normal(size=(50, 8)).astype(np.float16)
+    queries = rng.normal(size=(7, 8)).astype(np.float32)
+    got = top_k_vectors(docs, queries, k=5, query_chunk=3, paper_block=11)
+    want = np.argsort(-(queries @ docs.astype(np.float32).T), axis=1)[:, :5]
+    assert got.shape == (7, 5)
+    assert (got == want).all()

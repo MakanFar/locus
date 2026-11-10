@@ -109,3 +109,36 @@ class TestExactnessOfTheNullFloors:
         groups = [f"p{i // 3}" for i in range(n)]
         assert paper_mean([0.5] * n, groups) == 0.5
         assert cluster_ci([0.5] * n, groups, n_boot=200) == (0.5, 0.5)
+
+
+class TestPoolLevelClusterCI:
+    """The pool-level mean needs an interval too, and resampling pools would
+    understate it: pools from one citing paper are correlated. So citing
+    papers are resampled, and the statistic is the mean over all the pools
+    those papers contribute -- a ratio of sums, not a mean of paper means."""
+
+    def test_an_all_equal_input_gives_a_zero_width_interval_at_that_value(self):
+        from locus.core.bootstrap import pool_cluster_ci
+
+        assert pool_cluster_ci([0.5, 0.5, 0.5], ["a", "a", "b"], seed=0) == (0.5, 0.5)
+
+    def test_the_interval_brackets_the_pool_mean_not_the_paper_mean(self):
+        from locus.core.bootstrap import pool_cluster_ci
+
+        # paper a: 9 pools at 1.0; paper b: 1 pool at 0.0
+        values = [1.0] * 9 + [0.0]
+        groups = ["a"] * 9 + ["b"]
+        lo, hi = pool_cluster_ci(values, groups, n_boot=2000, seed=0)
+        # resamples are {a,a}: 1.0, {a,b}: 0.9, {b,b}: 0.0 -- each pool-weighted
+        assert lo == 0.0 and hi == 1.0
+        rng_vals = {0.0, 0.9, 1.0}
+        assert lo in rng_vals and hi in rng_vals
+
+    def test_it_is_deterministic_in_the_seed(self):
+        from locus.core.bootstrap import pool_cluster_ci
+
+        values = [0.1, 0.3, 0.4, 0.9, 0.2, 0.8, 0.7]
+        groups = ["a", "a", "b", "b", "c", "c", "c"]
+        assert pool_cluster_ci(values, groups, seed=3) == pool_cluster_ci(values, groups, seed=3)
+        lo, hi = pool_cluster_ci(values, groups, seed=3)
+        assert lo <= sum(values) / len(values) <= hi

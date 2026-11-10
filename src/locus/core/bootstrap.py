@@ -65,3 +65,40 @@ def cluster_ci(
     boot = means[idx].mean(axis=1)
     lo, hi = np.quantile(boot, [alpha / 2, 1 - alpha / 2])
     return (float(lo), float(hi))
+
+
+def pool_cluster_ci(
+    values: list[float],
+    groups: list[str],
+    n_boot: int = 1000,
+    seed: int = 0,
+    alpha: float = 0.05,
+) -> tuple[float, float]:
+    """Interval for the POOL-level mean, still resampling citing papers.
+
+    The pool-level mean is a different estimand from `paper_mean` -- one
+    pool, one vote -- but its uncertainty is not: pools from one citing paper
+    are correlated, so resampling pools would understate it. Citing papers
+    are resampled with replacement and the statistic is the mean over every
+    pool they contribute, a ratio of a resampled sum to a resampled count.
+    """
+    if not values:
+        return (float("nan"), float("nan"))
+    sums: dict[str, float] = collections.defaultdict(float)
+    counts: dict[str, int] = collections.defaultdict(int)
+    for v, g in zip(values, groups, strict=True):
+        sums[g] += v
+        counts[g] += 1
+    keys = sorted(sums)
+    s = np.array([sums[k] for k in keys], dtype=float)
+    n = np.array([counts[k] for k in keys], dtype=float)
+
+    first = values[0]
+    if all(v == first for v in values):
+        return (float(first), float(first))
+
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(keys), size=(n_boot, len(keys)))
+    boot = s[idx].sum(axis=1) / n[idx].sum(axis=1)
+    lo, hi = np.quantile(boot, [alpha / 2, 1 - alpha / 2])
+    return (float(lo), float(hi))
