@@ -70,11 +70,11 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-# The core bundle's manifest on Zenodo (record 22260046, doi:10.5281/zenodo.22260046,
-# version 0.2.0). This must be the manifest FILE, not the record page: every
+# The core bundle's manifest on Zenodo (record 24383365, doi:10.5281/zenodo.24383365,
+# version 0.3.0; concept doi:10.5281/zenodo.22260045). This must be the manifest FILE, not the record page: every
 # other file is resolved by `urljoin` against it, so it has to sit in the
 # same `files/` directory as the artefacts it names.
-ZENODO_CORE_RECORD = "https://zenodo.org/records/22260046"
+ZENODO_CORE_RECORD = "https://zenodo.org/records/24383365"
 DEFAULT_MANIFEST_URL: str | None = f"{ZENODO_CORE_RECORD}/files/bundle_manifest.json"
 
 CHUNK = 1 << 20

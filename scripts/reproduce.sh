@@ -144,7 +144,7 @@ stage_tier0() {
   step fetch "$W/release/locus_manifest_test.json" "$LOCUS" fetch "$W/release"
   step fetch-embeddings "$W/embeddings_test.parquet" \
     curl -fL -o "$W/embeddings_test.parquet" \
-      https://zenodo.org/records/22432297/files/embeddings_test.parquet
+      https://zenodo.org/records/24383583/files/embeddings_test.parquet
   need verify "$W/release/locus_manifest_test.json" "$W/embeddings_test.parquet" || return 0
   step verify "$W/logs/verify.ok" \
     "$LOCUS" verify --export "$W/release" \
@@ -413,6 +413,18 @@ stage_theta() {
 
 stage_export() {
   local split
+  # The hand-label study scored against the pipeline (docs/annotation_protocol.md
+  # section 9). The labels are committed; the last block rescores headline pools.
+  if need annotation-score "$W/embeddings_test.parquet" "$W/cocitation_train.npz" \
+      "$W/sweep_val.json"; then
+    step annotation-score "$W/annotation_score.json" \
+      "$LOCUS" exp annotation-score --key reports/annotation_key.csv \
+        --labels reports/annotation_labels.csv \
+        --pilot-key reports/annotation_pilot_key.csv \
+        --pilot-labels reports/annotation_pilot_labels.csv \
+        --build-report reports/build_report_test.json \
+        --embeddings "$W/embeddings_test.parquet" --out "$W/annotation_score.json"
+  fi
   for split in test val; do
     need "export-$split" "$W/index_$split.pkl" "$W/rank_items_$split.pkl" || continue
     step "export-$split" "$W/export/locus_manifest_$split.json" \

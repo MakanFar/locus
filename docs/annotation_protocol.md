@@ -1,9 +1,11 @@
 # Annotation protocol: are two citations at the same citation site?
 
-Version 0.3 (proposal, 2026-10-01). Two annotators. Not yet run. The sample
-the annotators label is drawn by `locus exp annotation-sample`
+Version 0.4 (2026-11-10). Two annotators. Sections 1 to 8 are the protocol
+as frozen before the main round; section 9 reports the run. The sample the
+annotators label is drawn by `locus exp annotation-sample`
 (`docs/reproduce.md`, "The annotation sample"); its cell populations are in
-`reports/annotation_manifest.json`.
+`reports/annotation_manifest.json`, and `locus exp annotation-score` turns
+the labels into section 6.
 
 ## 1. What this study is for
 
@@ -98,6 +100,14 @@ When an item has a `text_2`, the two windows usually share a passage. Find the
 shared passage, work out which `[cit]` in `text` is the candidate (or which in
 `text_2` is the target), and then label as usual. If the windows share no
 passage, label N.
+
+*Added in version 0.4, after the main round (§9):* `⟦T⟧` in `text_2` marks
+every citation of the target paper, and a paper cited more than once may
+show a different occurrence there from the one in `text`. The item is the
+occurrence in `text`. Judge only that one: if `text_2`'s `⟦T⟧` is another
+occurrence, label the pair by where the candidate sits relative to the
+target's own marker, W when it is in the target's window in another
+sentence and N when the two windows share no passage.
 
 Annotators do **not** see: which route proposed the pair, the Jaccard
 similarity, paper titles, or the other annotator's labels.
@@ -222,9 +232,8 @@ proxy's "different sentence" tier and label N to "not in window".
 ## 8. Open choices for the authors
 
 - Who the two annotators are, and who the third reader is.
-- The scoring script (agreement, κ, post-stratified precision and recall per
-  route) is not written yet. `key.csv` and `manifest.json` hold everything it
-  needs.
+- The scoring is `locus exp annotation-score` (`docs/reproduce.md`,
+  "Scoring the labels").
 - Whether a subsample of 50 items is additionally checked against the citing
   paper's PDF, to verify that the pipeline resolved the candidate marker to
   the right paper. This is the only way to measure marker-resolution error and
@@ -233,3 +242,98 @@ proxy's "different sentence" tier and label N to "not in window".
   case) count as one group. The guide says yes; if the authors prefer a
   strictly typographic definition (same bracket only), rule 2 changes and the
   pilot should be rerun.
+
+## 9. Results (2026-11-10)
+
+Two authors labelled, in a shared web page that showed one item at a time
+and nothing else, saved each label as it was made, and kept the other
+reader's labels hidden until both had finished. Committed with the key as
+`reports/annotation_labels.csv` and `reports/annotation_pilot_labels.csv`
+(ids and labels only); scored into `reports/annotation_score.json`.
+
+**Pilot.** 40 items, raw agreement 0.75, κ 0.62. Ten disagreements, of three
+kinds: enumerated lists where a topic word sits between the two markers (one
+reader G, the guide says S); sentence boundaries in damaged text; and items
+whose second window shares no passage with the first (one reader W, the guide
+says N). They were discussed and the guide text in §2 was not changed.
+
+**Main round.** 400 items, no uncertain ticks, no comments.
+
+| | raw agreement | κ |
+|---|---|---|
+| four-way label | 0.860 | 0.792 |
+| G vs rest | 0.963 | 0.892 |
+| G-or-S vs rest | 0.930 | 0.860 |
+
+56 items disagreed and all were settled by the two readers; none went to a
+third reader. The largest disagreement classes were N against W (15 items,
+nearly all in the disjoint stratum), S against W (19) and G against S (9).
+Four of the settled items were then re-labelled under the occurrence rule
+added to §3 (see below); the committed consensus is the result.
+
+Consensus labels by stratum:
+
+| Stratum | G | S | W | N |
+|---|---|---|---|---|
+| both routes | 23 | 18 | 19 | 0 |
+| marker only | 10 | 34 | 36 | 0 |
+| clustering only, aligned | 26 | 10 | 3 | 1 |
+| clustering only, unaligned | 31 | 19 | 10 | 0 |
+| transitive | 1 | 27 | 32 | 0 |
+| near miss | 0 | 8 | 52 | 0 |
+| weak overlap | 0 | 1 | 18 | 1 |
+| disjoint | 0 | 0 | 2 | 18 |
+
+**Pipeline against consensus**, post-stratified, 95% paper-level bootstrap
+intervals:
+
+| Site | Route | Precision | Recall | F1 |
+|---|---|---|---|---|
+| group | clustering | 0.553 [0.521, 0.593] | 0.998 [0.998, 0.998] | 0.712 |
+| group | marker | 0.472 [0.444, 0.510] | 0.909 [0.890, 0.927] | 0.621 |
+| group | union | 0.469 [0.442, 0.503] | 1.000 [1.000, 1.000] | 0.639 |
+| sentence | clustering | 0.852 [0.833, 0.870] | 0.935 [0.909, 0.950] | 0.891 |
+| sentence | marker | 0.759 [0.745, 0.772] | 0.889 [0.863, 0.906] | 0.819 |
+| sentence | union | 0.754 [0.739, 0.770] | 0.977 [0.951, 0.993] | 0.851 |
+
+The pipeline's errors are over-inclusion, not misses, and the over-inclusion
+is almost entirely "same sentence, different group": under the sentence
+definition three anchors in four are right, under the group definition about
+half. Per 100 contexts (104,401 in the split) the union adds 137 false
+anchors and misses none under the group definition; 64 and 4.6 under the
+sentence definition. The marker route alone misses 11 and 22, which the
+clustering route recovers.
+
+**The occurrence rule.** As first adjudicated, four non-anchor items were
+labelled G or S: one in the disjoint stratum (windows share no shingle;
+1,388,346 pairs, 20 sampled, so the item stood for 69,417 pairs), two in
+weak-overlap and one in near-miss. In each, the target paper is cited more
+than once in the citing paper and the second window showed a *different*
+occurrence of it next to the candidate; the target's own occurrence is in
+another sentence or another passage, and the other occurrence is its own
+context, for which the candidate is an anchor. The protocol had not said
+which occurrence to judge. The authors adopted the rule now in §3 (the
+target's own occurrence only), under which the four items are N, W, W, W.
+Precision is unchanged by this; recall under the sentence definition, which
+had been 0.690 [0.440, 0.937] for clustering, 0.656 [0.420, 0.891] for
+markers and 0.721 [0.459, 0.980] for the union with the one disjoint item
+carrying the interval, is as tabled above.
+
+**Proxy.** The regular-expression tier of §7 matches the consensus on 182 of
+the 186 items where it assigns a tier (group 30 of 30, sentence 78 of 81,
+different sentence 74 of 75). The `not_in_window` tier is not a judgement:
+on those 214 items the readers used the second window and found the pair in
+the same group 58 times, the same sentence 39, a different sentence 97, and
+not co-located 20.
+
+**Effect on the result.** 181 of the 400 target contexts are in the headline
+pools. On the 102 pools an annotated false positive touches (site = group),
+the reranker's gain is +0.155 with the pipeline's anchors and +0.158 with
+that anchor removed; on the 50 pools under the sentence definition, +0.047
+and +0.048. Annotated false negatives touch no pool under the group
+definition and three under the sentence definition, where adding the pair
+changes nothing. Removing the anchors the readers reject does not lower the
+gain.
+
+**Open.** §8's question on "and"-joined narrative citations, which the pilot
+raised (one item) and the guide still answers with G.

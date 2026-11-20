@@ -128,6 +128,12 @@ def _resolve_exp_annotation_sample() -> Callable[[list[str] | None], int]:
     return annotation.main
 
 
+def _resolve_exp_annotation_score() -> Callable[[list[str] | None], int]:
+    from locus.experiments import annotation_score
+
+    return annotation_score.main
+
+
 # --- verbs with no existing main(): fetch, ingest, doctor, eval all -------
 
 def _resolve_fetch() -> Callable[[list[str] | None], int]:
@@ -344,6 +350,7 @@ _GROUPED: dict[str, dict[str, Resolver]] = {
         "proximity": _resolve_exp_proximity,
         "theta": _resolve_exp_theta,
         "annotation-sample": _resolve_exp_annotation_sample,
+        "annotation-score": _resolve_exp_annotation_score,
     },
 }
 

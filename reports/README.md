@@ -33,6 +33,8 @@ no identifiers, no text. Paths inside them have been reduced to file names.
 | Appendix C, anchor influence by \|A\| | `influence_specter2.json` | `by_n_anchors` |
 | λ / α selection, one sweep per base or association measure | `sweep_val*.json` | `best`, `grid` |
 | Annotation sample (docs/annotation_protocol.md) | `annotation_manifest.json` | `cells.*.{population,quota,drawn}` |
+| Annotation study, items and labels (ids only; the text stays with the corpus) | `annotation_key.csv`, `annotation_labels.csv`, `annotation_pilot_{key,labels}.csv` | `stratum`, `cell`, `tier`, `cell_population`; `label_A`, `label_B`, `consensus` |
+| Appendix D, Table 11, the annotation study scored (protocol section 9) | `annotation_score.json` | `agreement`, `pilot_agreement`, `estimates.{group,sentence}.{clustering,marker,union}`, `proxy`, `anatomy`, `effect` |
 | Value-to-report map, checked by `tests/test_paper_map.py` | `paper_map.json` | `claims[].{report,key,paper,expect}` |
 
 Every rank report records `averaging: "paper"`: each metric is a mean of

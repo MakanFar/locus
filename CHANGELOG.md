@@ -6,9 +6,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-20
+
 ### Added
 - `locus fetch` defaults to the deposited core bundle
-  (doi:10.5281/zenodo.22260046); `--manifest-url` is now an override.
+  (doi:10.5281/zenodo.24383365, version 0.3.0); `--manifest-url` is now an
+  override.
 - `reports/`: the run reports every number in the paper is read from, with a
   table/figure -> file map in `reports/README.md`.
 - `locus exp anchors` writes the Figure 3 anchor map (`anchor_map_{tag}.json`
@@ -35,6 +38,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `reports/paper_map.json` with
   `locus.core.provenance`, which ties each printed number to a report key
   and to what it was measured on (`tests/test_paper_map.py`).
+- `locus exp annotation-score`: the hand-label study of
+  `docs/annotation_protocol.md`, scored. Reads the key and the two readers'
+  labels with their consensus (`reports/annotation_{key,labels}.csv`, the
+  pilot alongside) and writes `reports/annotation_score.json`: agreement and
+  kappa, post-stratified precision and recall per route under both site
+  definitions with paper-level bootstrap intervals, the proxy-tier check,
+  the error anatomy per 100 contexts and the rescoring of the headline pools
+  the labels touch.
 - `scripts/hard_easy_contrast.py`: the hard-versus-easy gain comparison with
   one paper-level bootstrap over both slices, so the difference and ratio of
   the two gains carry intervals of their own (`reports/hard_easy_contrast_specter2.json`).
@@ -67,7 +78,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   34,577 headline pools (was 35,701), headline MRR 0.49672 -> 0.62054
   (+0.12382; was 0.47771 -> 0.59585). Validation now selects alpha 0.75,
   lambda 3.0 for SPECTER2, which `locus verify` takes as its defaults. The
-  deposited 0.2.0 bundle and embeddings predate the fix.
+  bundle and the embeddings were re-deposited as version 0.3.0
+  (doi:10.5281/zenodo.24383365 and doi:10.5281/zenodo.24383583); the 0.2.0
+  deposits predate the fix.
 - `reports/expb_report_*.json` are now the `--standardize none` runs, which is
   the setting the paper's sequential-completion numbers come from; the
   `zscore` default remains available as an ablation.

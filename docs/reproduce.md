@@ -39,17 +39,16 @@ Then fetch the bundle and check it end to end:
 ```
 
 `fetch` downloads the core bundle from Zenodo
-(<https://doi.org/10.5281/zenodo.22260046>, version 0.2.0, CC-BY-4.0) and
+(<https://doi.org/10.5281/zenodo.24383365>, version 0.3.0, CC-BY-4.0) and
 verifies every file's sha256 against `bundle_manifest.json` before anything
 lands; `--manifest-url` points it somewhere else. The bundle is **flat**:
 `locus_rank_test.jsonl`, `locus_swap_test.jsonl`, `locus_anchors_test.jsonl`,
-`locus_manifest_test.json` and `cocitation_train.npz` (plus the `val` split
-and `bundle_manifest.json` itself) land directly in `work/release/` — there
-is no `export/`
-subdirectory. It does **not** carry `embeddings_test.parquet`: precomputed
+`locus_manifest_test.json` and `cocitation_train.npz` (plus the `val` split)
+land directly in `work/release/` — there is no `export/` subdirectory, and
+the manifest itself is read from Zenodo, not saved. It does **not** carry `embeddings_test.parquet`: precomputed
 embeddings are derived from upstream abstracts and are deliberately kept out
 of the core bundle so its DOI survives independently of that separate
-deposit: <https://doi.org/10.5281/zenodo.22432297> holds
+deposit: <https://doi.org/10.5281/zenodo.24383583> holds
 `embeddings_{test,val}.parquet` (SPECTER2) plus the SciNCL and HAtten
 vectors for both splits.
 
@@ -78,10 +77,9 @@ print(m['floors']); print(m['counts'])
 | Citing papers | 9,208 |
 
 These counts are for the corrected pools (distractors drawn outside both
-anchor routes; see CHANGELOG). The bundle deposited as version 0.2.0 predates
-that fix and declares 55,488 rank pools and 35,701 headline pools; until the
-bundle is re-deposited, `locus fetch` returns the old pools and the Tier 0
-numbers below will not match it.
+anchor routes; see CHANGELOG). The 0.3.0 deposit carries the corrected pools;
+the superseded 0.2.0 version (doi:10.5281/zenodo.22260046) declares 55,488
+rank pools and 35,701 headline pools and will not match the numbers below.
 
 These are the manifest's declared floors, not a recomputation: `fetch`
 already checked every file's sha256 against that manifest, and reading them
@@ -99,7 +97,7 @@ precomputed-embeddings record:
 
 ```bash
 curl -L -o work/embeddings_test.parquet \
-  https://zenodo.org/records/22432297/files/embeddings_test.parquet
+  https://zenodo.org/records/24383583/files/embeddings_test.parquet
 ```
 
 then:
@@ -139,7 +137,7 @@ export LOCUS_DATA_DIR=/path/to/lcr_arxiv LOCUS_WORK_DIR=$PWD/work
 ```
 
 Both `embeddings_{val,test}.parquet` are also in the embeddings deposit
-(<https://doi.org/10.5281/zenodo.22432297>) if you would rather not run
+(<https://doi.org/10.5281/zenodo.24383583>) if you would rather not run
 `locus embed`. **Expect** on Rank `0.49672` → `0.62054` (`+0.12382`, with
 alpha 0.75, lambda 3.0 selected on val) and on Swap `0.81602` → `0.84358`
 (`+0.02755`, lambda 0.2). Every metric is a mean of per-citing-paper means
@@ -312,6 +310,28 @@ decision), a key, and a manifest with each cell's population:
 non-anchors by window overlap. The sheets contain corpus text and stay in
 the work directory; the key and manifest hold identifiers and counts only,
 and the manifest is committed as `reports/annotation_manifest.json`.
+
+**Scoring the labels.** The two readers' labels and the adjudicated
+consensus are committed with the key, ids only (`reports/annotation_key.csv`,
+`reports/annotation_labels.csv`, and the pilot alongside). Scoring them needs
+no corpus; the last block, which rescores the headline pools the labels
+touch, needs the test embeddings, the graph and the sweep selection:
+
+```bash
+.venv/bin/locus exp annotation-score --key reports/annotation_key.csv --labels reports/annotation_labels.csv --pilot-key reports/annotation_pilot_key.csv --pilot-labels reports/annotation_pilot_labels.csv --build-report reports/build_report_test.json --embeddings work/embeddings_test.parquet --out work/annotation_score.json
+```
+
+**Expect** raw agreement `0.860`, kappa `0.792` on the four-way label
+(`0.892` for G against the rest, `0.860` for G-or-S against the rest), 56
+items adjudicated, and a pilot at `0.750` / `0.622`. Post-stratified, site =
+sentence: clustering precision `0.852` [0.833, 0.870], marker `0.759`,
+union `0.754`; site = group: `0.553`, `0.472`, `0.469`. Recall under the
+group definition `0.998` / `0.909` / `1.000`; under the sentence definition
+`0.935` [0.909, 0.950] / `0.889` / `0.977`. The regex tier matches
+the consensus on 182 of the 186 items where it assigns one. On the 102
+headline pools an annotated false positive touches, the gain is `+0.15474`
+with the pipeline's anchors and `+0.15789` with that anchor removed.
+Seconds without `--embeddings`; about a minute with.
 
 The appendix compares the hard and easy gains, and a ratio or difference of
 two separately bootstrapped means has no interval of its own, so the

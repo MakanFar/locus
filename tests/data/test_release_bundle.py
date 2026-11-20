@@ -54,7 +54,7 @@ def test_the_bundler_refuses_to_bundle_an_excluded_file(tmp_path, capsys):
     assert "embed_inputs" in err
     # Refused before any copy, not after: nothing forbidden -- and nothing
     # at all -- should have reached `dest`.
-    dest = out / "locus-v0.2.0"
+    dest = out / "locus-v0.3.0"
     assert not dest.exists() or not any(dest.rglob("embed_inputs*"))
 
 
@@ -84,7 +84,7 @@ def test_the_bundler_refuses_a_pre_existing_forbidden_file_in_dest(tmp_path, cap
     first = bundle.main(["--work", str(work), "--out", str(out)])
     assert first == 0
 
-    dest = out / "locus-v0.2.0"
+    dest = out / "locus-v0.3.0"
     assert dest.exists()
     before = (dest / "bundle_manifest.json").read_text()
 

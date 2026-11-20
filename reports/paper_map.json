@@ -6460,6 +6460,943 @@
     "ye.2": 7.5,
     "ye.7": 11.0
    }
+  },
+  {
+   "id": "annotation.pairs_in_split",
+   "where": "app:annotation",
+   "report": "annotation_manifest.json",
+   "key": "pairs_in_split",
+   "paper": "1{,}722{,}838",
+   "expect": {
+    "items": 400,
+    "pilot_items": 40,
+    "split": "test"
+   }
+  },
+  {
+   "id": "annotation.items",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "items",
+   "paper": "400",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.adjudicated",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "adjudicated",
+   "paper": "56",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.raw",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "agreement.raw",
+   "paper": "0.860",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.kappa",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "agreement.kappa",
+   "paper": "0.79",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.kappa_g",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "agreement.kappa_g_vs_rest",
+   "paper": "0.89",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.kappa_gs",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "agreement.kappa_gs_vs_rest",
+   "paper": "0.86",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.pilot.raw",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "pilot_agreement.raw",
+   "paper": "0.75",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "pilot_items": 40
+   }
+  },
+  {
+   "id": "annotation.pilot.kappa",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "pilot_agreement.kappa",
+   "paper": "0.62",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "pilot_items": 40
+   }
+  },
+  {
+   "id": "annotation.consensus.G",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "consensus_counts.G",
+   "paper": "91",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.consensus.S",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "consensus_counts.S",
+   "paper": "117",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.consensus.W",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "consensus_counts.W",
+   "paper": "172",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.consensus.N",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "consensus_counts.N",
+   "paper": "20",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.group.clustering.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.precision",
+   "paper": "0.553",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.ci.precision.0",
+   "paper": "0.521",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.ci.precision.1",
+   "paper": "0.593",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.recall",
+   "paper": "0.998",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.ci.recall.0",
+   "paper": "0.998",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.ci.recall.1",
+   "paper": "0.998",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.clustering.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.clustering.f1",
+   "paper": "0.712",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.precision",
+   "paper": "0.472",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.ci.precision.0",
+   "paper": "0.444",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.ci.precision.1",
+   "paper": "0.510",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.recall",
+   "paper": "0.909",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.ci.recall.0",
+   "paper": "0.890",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.ci.recall.1",
+   "paper": "0.927",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.marker.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.marker.f1",
+   "paper": "0.621",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.precision",
+   "paper": "0.469",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.ci.precision.0",
+   "paper": "0.442",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.ci.precision.1",
+   "paper": "0.503",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.recall",
+   "paper": "1.000",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.ci.recall.0",
+   "paper": "1.000",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.ci.recall.1",
+   "paper": "1.000",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.group.union.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.group.union.f1",
+   "paper": "0.639",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.group.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.precision",
+   "paper": "0.852",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.ci.precision.0",
+   "paper": "0.833",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.ci.precision.1",
+   "paper": "0.870",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.recall",
+   "paper": "0.935",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.ci.recall.0",
+   "paper": "0.909",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.ci.recall.1",
+   "paper": "0.950",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.clustering.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.clustering.f1",
+   "paper": "0.891",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.clustering.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.precision",
+   "paper": "0.759",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.ci.precision.0",
+   "paper": "0.745",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.ci.precision.1",
+   "paper": "0.772",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.recall",
+   "paper": "0.889",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.ci.recall.0",
+   "paper": "0.863",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.ci.recall.1",
+   "paper": "0.906",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.marker.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.marker.f1",
+   "paper": "0.819",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.marker.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.precision",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.precision",
+   "paper": "0.754",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.precision.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.ci.precision.0",
+   "paper": "0.739",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.precision.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.ci.precision.1",
+   "paper": "0.770",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.recall",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.recall",
+   "paper": "0.977",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.recall.lo",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.ci.recall.0",
+   "paper": "0.951",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.recall.hi",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.ci.recall.1",
+   "paper": "0.993",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.sentence.union.f1",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "estimates.sentence.union.f1",
+   "paper": "0.851",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "estimates.sentence.union.n_boot": 1000
+   }
+  },
+  {
+   "id": "annotation.proxy.agree",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "proxy.agree",
+   "paper": "182",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.proxy.assigned",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "proxy.assigned",
+   "paper": "186",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400
+   }
+  },
+  {
+   "id": "annotation.anatomy.group.union.fp",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "anatomy.group.union.fp_per_100_contexts",
+   "paper": "137",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "anatomy.contexts": 104401
+   }
+  },
+  {
+   "id": "annotation.anatomy.sentence.union.fp",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "anatomy.sentence.union.fp_per_100_contexts",
+   "paper": "64",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "anatomy.contexts": 104401
+   }
+  },
+  {
+   "id": "annotation.anatomy.sentence.union.fn",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "anatomy.sentence.union.fn_per_100_contexts",
+   "paper": "4.6",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "anatomy.contexts": 104401
+   }
+  },
+  {
+   "id": "annotation.effect.contexts",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.group.annotated_contexts_in_headline",
+   "paper": "181",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0
+   }
+  },
+  {
+   "id": "annotation.effect.group.pools",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.group.touched_by_false_positives.pools",
+   "paper": "102",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.group.touched_by_false_positives.anchors_removed": 102
+   }
+  },
+  {
+   "id": "annotation.effect.group.pipeline",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.group.touched_by_false_positives.delta_pipeline",
+   "paper": "+0.155",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.group.touched_by_false_positives.anchors_removed": 102
+   }
+  },
+  {
+   "id": "annotation.effect.group.corrected",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.group.touched_by_false_positives.delta_corrected",
+   "paper": "+0.158",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.group.touched_by_false_positives.anchors_removed": 102
+   }
+  },
+  {
+   "id": "annotation.effect.sentence.pools",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.sentence.touched_by_false_positives.pools",
+   "paper": "50",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.sentence.touched_by_false_positives.anchors_removed": 50
+   }
+  },
+  {
+   "id": "annotation.effect.sentence.pipeline",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.sentence.touched_by_false_positives.delta_pipeline",
+   "paper": "+0.047",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.sentence.touched_by_false_positives.anchors_removed": 50
+   }
+  },
+  {
+   "id": "annotation.effect.sentence.corrected",
+   "where": "app:annotation",
+   "report": "annotation_score.json",
+   "key": "effect.sentence.touched_by_false_positives.delta_corrected",
+   "paper": "+0.048",
+   "expect": {
+    "items": 400,
+    "split": "test",
+    "adjudicated": 56,
+    "agreement.items": 400,
+    "effect.headline_pools": 34577,
+    "effect.selected.lambda": 3.0,
+    "effect.sentence.touched_by_false_positives.anchors_removed": 50
+   }
   }
  ]
 }
