@@ -1,11 +1,11 @@
-"""What makes an anchor informative? The PPMI x cosine grid and its strata.
+"""What makes an anchor informative? The PPMI x cosine grid and its categories.
 
 The leave-one-out pass (`influence.py`) answers *how much* each anchor moves
 the target. This module asks *what kind* of anchor does it, using only columns
 that pass already carries -- PPMI(c,a), cosine(c,a), and the rank change --
 plus one join back to the anchor sets.
 
-Four outputs, in the order the argument runs:
+Three outputs, in the order the argument runs:
 
   A  grid          PPMI x cosine cells with count, mean d_rr and mean d_score.
                    Two cells carry the thesis: SEMANTIC-ONLY (cosine high,
@@ -22,8 +22,6 @@ Four outputs, in the order the argument runs:
                    redundancy; reporting all three as redundancy would claim
                    the set is over-determined where the real cause is that the
                    graph has nothing to say.
-  F  strata        a fixed-seed stratified sample for the qualitative pass,
-                   drawn from strata defined here rather than after looking.
 
 Not covered here, deliberately: the direction asymmetry. With the mean
 aggregator Delta(a->b) - Delta(b->a) is dominated by a normalisation
@@ -39,7 +37,6 @@ import argparse
 import collections
 import json
 import pickle
-import random
 import statistics
 import sys
 from pathlib import Path
@@ -292,7 +289,7 @@ def _histogram(values: list[float], bins: int = 20) -> tuple[list[int], float]:
 
 
 PPMI_EDGES = (0.0, 1e-9, 7.5, 8.5, 9.0, 9.5, 10.0, 11.0)
-"""Lower edges of the PPMI bands in the paper's anchor map (Figure 4).
+"""Lower edges of the PPMI bands in the paper's anchor map (Figure 3).
 
 Zero is its own band, closed at 1e-9 so that PPMI == 0 never leaks into the
 first positive band; the remaining edges are fixed rather than quantiles so
@@ -304,7 +301,7 @@ N_OCTILES = 8
 
 
 def anchor_map(rows: list[dict]) -> dict:
-    """Mean rank influence on a PPMI-band x cosine-octile grid (Figure 4).
+    """Mean rank influence on a PPMI-band x cosine-octile grid (Figure 3).
 
     Rows without a cosine are excluded, as in `grid`. The cosine edges are the
     octiles of the observed similarities (numpy's default linear quantile), so
@@ -352,7 +349,7 @@ def anchor_map(rows: list[dict]) -> dict:
 
 
 def pgfplots_table(anchor_map_: dict) -> str:
-    """The `x y value` block figure_4.tex reads, bands top-down, 4 dp.
+    """The `x y value` block figure_3.tex reads, bands top-down, 4 dp.
 
     x is the cosine octile 0..7, y the PPMI band 0..7 with 0 the zero band and
     7 the >= 11 band. An empty cell prints `nan`, which pgfplots leaves blank.
@@ -367,64 +364,11 @@ def pgfplots_table(anchor_map_: dict) -> str:
     return "\n\n".join(blocks)
 
 
-STRATA = ("informative", "redundant", "non_cocited")
-
-
-def strata(rows: list[dict], edge: float, seed: int = config.SEED,
-           per_stratum: int = 10) -> dict[str, dict]:
-    """Fixed-seed stratified sample, with the strata fixed before looking.
-
-    Four strata, one per row of the taxonomy plus the topical sub-split of
-    `informative`, so a shown example can always be placed in the partition
-    rather than chosen for being striking.
-
-    Rows without a cosine are excluded from every stratum, not just the
-    cosine-defined ones. 64 of 143,494 interventions (0.045%, 51 distinct
-    papers) have no vector, because the similarity store covers the union of
-    the split's prefetch lists and those papers were never proposed by any
-    prefetch. They cannot be recomputed without embedding papers outside that
-    union, and an example printed with a blank cosine is not an example of
-    anything on the cosine axis -- so they are dropped here and reported.
-    """
-    cats = categorise(rows)
-    by_target: dict[tuple[str, str], list[float]] = collections.defaultdict(list)
-    for r in rows:
-        by_target[(r["context_id"], r["gold"])].append(r["ppmi"])
-
-    def covered(r) -> bool:
-        ps = by_target[(r["context_id"], r["gold"])]
-        return sum(1 for s in ps if s >= r["ppmi"]) > 1
-
-    def known(rs):
-        return [r for r in rs if r["sim"] is not None]
-
-    inf = known(cats["informative"])
-    pools = {
-        "informative_aligned": [r for r in inf if r["sim"] >= edge],
-        "informative_cross_topic": [r for r in inf if r["sim"] < edge],
-        "redundant": [r for r in known(cats["redundant"]) if covered(r)],
-        "non_cocited_harmful": [r for r in known(cats["non_cocited"])
-                                if r["d_rr"] < 0.0],
-    }
-    rng = random.Random(seed)
-    out = {}
-    for k, pool in pools.items():
-        pool = sorted(pool, key=lambda r: (r["context_id"], r["anchor"]))
-        out[k] = {
-            "population": len(pool),
-            "mean_d_rr": statistics.fmean(r["d_rr"] for r in pool) if pool else None,
-            "sample": rng.sample(pool, min(per_stratum, len(pool))),
-        }
-    out["_excluded_no_similarity"] = sum(1 for r in rows if r["sim"] is None)
-    return out
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--tag", default="specter2")
     ap.add_argument("--rows", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=None)
-    ap.add_argument("--per-stratum", type=int, default=10)
     args = ap.parse_args(argv)
 
     rows_path = args.rows or (
@@ -478,27 +422,18 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  cross-topic n={ts['cross_topic']['n']:>6} "
           f"mean d_rr {ts['cross_topic']['mean_d_rr']:+.4f}")
 
-    st = strata(rows, g["cosine_edges"][0], per_stratum=args.per_stratum)
-    print(f"\nstrata (excluding {st['_excluded_no_similarity']} rows with no "
-          "similarity):")
-    for k, v in st.items():
-        if k.startswith("_"):
-            continue
-        print(f"  {k:<26}{v['population']:>8}  {v['mean_d_rr']:+.5f}  "
-              f"sampled {len(v['sample'])}")
-
     report = {"tag": args.tag, "grid": g, "nulls": nulls,
               "categories": {k: {
                   "n": len(v), "frac": len(v) / len(rows),
                   "mean_d_rr": statistics.fmean(x["d_rr"] for x in v),
                   "mean_ppmi": statistics.fmean(x["ppmi"] for x in v),
               } for k, v in cats.items()},
-              "topical_split": ts, "strata": st}
+              "topical_split": ts}
     with open(out, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
     print(f"\nwrote {out}")
 
-    # Figure 4. Written as its own file, in the shape the figure was first
+    # Figure 3. Written as its own file, in the shape the figure was first
     # produced from, so the paper's grid can be diffed against it directly.
     amap = anchor_map(rows)
     map_path = out.with_name(f"anchor_map_{args.tag}.json")

@@ -101,6 +101,13 @@ def main(argv: list[str] | None = None) -> int:
              "references per paper has to lower this; the chance floor is "
              "H_k/k and moves with it.",
     )
+    ap.add_argument(
+        "--theta", type=float, default=config.THETA,
+        help=f"Jaccard threshold for location clustering (default {config.THETA}, "
+             "the published value). For sensitivity analysis only: the frozen "
+             "benchmark is built at the default, and results at other values "
+             "are not a way to choose it.",
+    )
     args = ap.parse_args(argv)
     split = args.split
     pool_size = args.pool_size
@@ -120,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
 
     where = args.corpus or "contexts.json"
     print(f"[1/6] building {split} index (one pass over {where}, ~8 min)")
-    index = build_index(split, source=record_source)
+    index = build_index(split, source=record_source, theta=args.theta)
     save_index(index, config.WORK_DIR / f"index_{split}.pkl")
     n_ctx = sum(len(v) for v in index.values())
     print(f"      {n_ctx} contexts across {len(index)} citing papers")
@@ -359,7 +366,8 @@ def main(argv: list[str] | None = None) -> int:
             "pool_size": pool_size,
             "swap_k": config.SWAP_K,
             "shingle_n": config.SHINGLE_N,
-            "theta": config.THETA,
+            # likewise the theta actually clustered with
+            "theta": args.theta,
             "hardness_tau": config.HARDNESS_TAU,
             "seed": config.SEED,
         },

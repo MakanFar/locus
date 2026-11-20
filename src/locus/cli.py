@@ -110,6 +110,30 @@ def _resolve_exp_anchors() -> Callable[[list[str] | None], int]:
     return anchor_analysis.main
 
 
+def _resolve_exp_proximity() -> Callable[[list[str] | None], int]:
+    from locus.experiments import proximity
+
+    return proximity.main
+
+
+def _resolve_exp_theta() -> Callable[[list[str] | None], int]:
+    from locus.experiments import theta
+
+    return theta.main
+
+
+def _resolve_exp_annotation_sample() -> Callable[[list[str] | None], int]:
+    from locus.experiments import annotation
+
+    return annotation.main
+
+
+def _resolve_exp_annotation_score() -> Callable[[list[str] | None], int]:
+    from locus.experiments import annotation_score
+
+    return annotation_score.main
+
+
 # --- verbs with no existing main(): fetch, ingest, doctor, eval all -------
 
 def _resolve_fetch() -> Callable[[list[str] | None], int]:
@@ -323,6 +347,10 @@ _GROUPED: dict[str, dict[str, Resolver]] = {
         "completion": _resolve_exp_completion,
         "influence": _resolve_exp_influence,
         "anchors": _resolve_exp_anchors,
+        "proximity": _resolve_exp_proximity,
+        "theta": _resolve_exp_theta,
+        "annotation-sample": _resolve_exp_annotation_sample,
+        "annotation-score": _resolve_exp_annotation_score,
     },
 }
 

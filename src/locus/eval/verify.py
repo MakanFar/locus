@@ -16,10 +16,10 @@ Two inputs are NOT in the export and cannot be:
   --graph         the train-split co-citation counts (`cocitation_train.npz`),
                   which are ours to publish and are shipped alongside
 
-Expected on test with SPECTER2 at alpha=0.5, min_count=1, lambda=4.0:
+Expected on test with SPECTER2 at alpha=0.75, min_count=1, lambda=3.0:
 
-    MRR  0.47771 -> 0.59585   (delta +0.11814)
-    R@1  0.28051 -> 0.43124   (delta +0.15072)
+    MRR  0.49672 -> 0.62054   (delta +0.12382)
+    R@1  0.30307 -> 0.45956   (delta +0.15648)
 
 Usage:
     .venv/bin/python -m locus.eval.verify \\
@@ -183,9 +183,9 @@ def primary_result(
     embeddings: Path,
     graph: Path,
     split: str = "test",
-    alpha: float = 0.5,
+    alpha: float = 0.75,
     min_count: int = 1,
-    lam: float = 4.0,
+    lam: float = 3.0,
 ) -> dict[str, Metric]:
     """Recompute the paper's primary result from the export alone.
 
@@ -236,9 +236,9 @@ def main(argv: list[str] | None = None) -> int:
                     default=config.WORK_DIR / "embeddings_test.parquet")
     ap.add_argument("--graph", type=Path,
                     default=config.WORK_DIR / "cocitation_train.npz")
-    ap.add_argument("--alpha", type=float, default=0.5)
+    ap.add_argument("--alpha", type=float, default=0.75)
     ap.add_argument("--min-count", type=int, default=1)
-    ap.add_argument("--lam", type=float, default=4.0)
+    ap.add_argument("--lam", type=float, default=3.0)
     args = ap.parse_args(argv)
 
     metrics = primary_result(

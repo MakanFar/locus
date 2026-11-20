@@ -31,14 +31,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import random
 import sys
 from pathlib import Path
 
 from locus import config
-from locus.core.bootstrap import cluster_ci, paper_mean
+from locus.core.bootstrap import cluster_ci, paper_mean, pool_cluster_ci
 from locus.core.probe import hit_at_1, reciprocal_rank
-from locus.core.types import gold_sets
+from locus.core.types import ANCHOR_ROUTES, gold_sets
 from locus.data.corpus import load_index
 from locus.eval.sweep import build_pools
 from locus.scoring import base_scorer
@@ -98,7 +99,29 @@ def paired(a: list[float], b: list[float], groups: list[str], seed: int) -> dict
         "ci": [lo, hi],
         "excludes_zero": lo > 0.0 or hi < 0.0,
         "n": len(diffs),
+        "papers": len(set(groups)),
     }
+
+
+def pool_level(a: list[float], b: list[float], groups: list[str] | None = None,
+               seed: int = 0) -> dict:
+    """The same comparison averaged over pools instead of over citing papers.
+
+    Every reported metric is a mean of per-paper means (`paired`). This is the
+    other unit: one pool, one vote. It is not a correction of the paper-level
+    number -- it is a different estimand -- but it is the one under which a
+    partition of the pools recombines exactly to the total. Given the citing
+    papers, the interval is a cluster bootstrap over them of the pool-level
+    difference (`pool_cluster_ci`): pools are not resampled on their own.
+    """
+    if not a:
+        return {"a": None, "b": None, "delta": None, "n": 0}
+    ma, mb = math.fsum(a) / len(a), math.fsum(b) / len(b)
+    diffs = [x - y for x, y in zip(a, b, strict=True)]
+    out = {"a": ma, "b": mb, "delta": math.fsum(diffs) / len(a), "n": len(a)}
+    if groups is not None:
+        out["ci"] = list(pool_cluster_ci(diffs, groups, n_boot=1000, seed=seed))
+    return out
 
 
 COVERAGE_STRATA = ("target", "distractor", "none")
@@ -131,9 +154,12 @@ def coverage_strata(pools: list[dict], ppmi, lam: float, agg: str,
                     seed: int) -> dict[str, dict]:
     """Paired base-vs-rescored MRR within each coverage stratum.
 
-    Each stratum is its own paired paper-level bootstrap; citing papers may
-    appear in several strata, so the rows do not recombine into the headline
-    interval, only into its point estimate.
+    Each stratum is its own paired paper-level bootstrap. Citing papers appear
+    in several strata, so the paper-level rows (`a`, `b`, `delta`) do NOT
+    recombine to the headline by pool weighting. The pool-level means
+    (`pool_a`, `pool_b`, `pool_delta`) do, exactly; both are reported because
+    the first is the paper's estimand and the second is the decomposition
+    that adds up.
     """
     by: dict[str, list[dict]] = {s: [] for s in COVERAGE_STRATA}
     for p in pools:
@@ -147,13 +173,17 @@ def coverage_strata(pools: list[dict], ppmi, lam: float, agg: str,
     for stratum, sub in by.items():
         if not sub:
             out[stratum] = {"n": 0, "share": 0.0, "a": None, "b": None,
-                            "delta": None, "ci": [None, None]}
+                            "delta": None, "ci": [None, None], "papers": 0,
+                            "pool_a": None, "pool_b": None, "pool_delta": None}
             continue
         groups = [p["citing_id"] for p in sub]
         base = [_score(p, ppmi, p["anchors"], 0.0, agg=agg) for p in sub]
         resc = [_score(p, ppmi, p["anchors"], lam, agg=agg) for p in sub]
         row = paired(resc, base, groups, seed)
         row["share"] = len(sub) / len(pools)
+        pl = pool_level(resc, base, groups, seed)
+        row["pool_a"], row["pool_b"], row["pool_delta"] = pl["a"], pl["b"], pl["delta"]
+        row["pool_ci"] = pl["ci"]
         out[stratum] = row
     return out
 
@@ -181,6 +211,10 @@ def main(argv: list[str] | None = None) -> int:
                     default=config.WORK_DIR / "cocitation_train.npz")
     ap.add_argument("--slice", dest="slice_", default="headline",
                     choices=("headline", "easy", "all"))
+    ap.add_argument("--anchor-route", choices=ANCHOR_ROUTES, default="union",
+                    help="which evidence the anchor sets come from. 'union' is "
+                         "the published setting; 'clustering' and 'marker' are "
+                         "the route ablation. The pools are the same either way")
     ap.add_argument("--out", type=Path,
                     default=config.WORK_DIR / "rank_report.json")
     args = ap.parse_args(argv)
@@ -192,7 +226,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"selected on val: alpha={alpha} min_count={min_count} lambda={lam}")
 
     pools = build_pools(args.split, args.embeddings, args.slice_,
-                        scorer=base_scorer(args.embeddings, args.texts))
+                        scorer=base_scorer(args.embeddings, args.texts),
+                        anchor_route=args.anchor_route)
     _graph = CoGraph.load(args.graph)
     ppmi = association(args.assoc, _graph, alpha, min_count, args.vectors)
     control = other_location_anchors(args.split, config.SEED)
@@ -209,6 +244,19 @@ def main(argv: list[str] | None = None) -> int:
           f"{'PASS' if gate1['excludes_zero'] and gate1['delta'] > 0 else 'FAIL'}")
     if not (gate1["excludes_zero"] and gate1["delta"] > 0):
         failures.append("gate 1: rescoring does not improve the primary metric")
+    # The same comparison under the other averaging unit, and on the pools
+    # that actually have an anchor under this route (all of them for the
+    # union on the headline slice; fewer under a single route).
+    gate1_pool = pool_level(rescored, base, groups, config.SEED)
+    print(f"        pool-level: base {gate1_pool['b']:.6f} -> rescored "
+          f"{gate1_pool['a']:.6f}  delta {gate1_pool['delta']:+.6f} "
+          f"CI [{gate1_pool['ci'][0]:+.6f}, {gate1_pool['ci'][1]:+.6f}]")
+    anchored = [i for i, p in enumerate(pools) if p["anchors"]]
+    gate1_anchored = paired([rescored[i] for i in anchored], [base[i] for i in anchored],
+                            [groups[i] for i in anchored], config.SEED)
+    print(f"        on the {len(anchored)} pools with an anchor under route "
+          f"{args.anchor_route!r}: delta {gate1_anchored['delta']:+.6f} "
+          f"CI [{gate1_anchored['ci'][0]:+.6f}, {gate1_anchored['ci'][1]:+.6f}]")
 
     # GATE 2 runs only where a control anchor set exists, and both arms are
     # restricted to that same subset so the comparison stays paired.
@@ -277,8 +325,14 @@ def main(argv: list[str] | None = None) -> int:
         "assoc": args.assoc,
         "agg": args.agg,
         "selected": selected,
+        "anchor_route": args.anchor_route,
+        "averaging": "paper",
         "pools": len(pools),
+        "papers": gate1["papers"],
+        "pools_with_anchors": len(anchored),
         "gate1_primary": gate1,
+        "gate1_pool_level": gate1_pool,
+        "gate1_on_anchored": gate1_anchored,
         "gate2_other_location_control": gate2,
         "other_location_vs_base": other_vs_base,
         "gate1_hit_at_1": gate1_r1,

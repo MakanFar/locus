@@ -62,27 +62,26 @@ def merge_topk(best_s, best_i, s, i, k):
     return best_s, best_i
 
 
-def top_k(store: MmapScorer, context_ids: list[str], k: int,
-          query_chunk: int = QUERY_CHUNK, paper_block: int = PAPER_BLOCK,
-          progress=None) -> np.ndarray:
-    """Row i holds the store-row indices of the k nearest papers to query i.
+def top_k_vectors(docs, queries: np.ndarray, k: int,
+                  query_chunk: int = QUERY_CHUNK, paper_block: int = PAPER_BLOCK,
+                  progress=None, return_scores: bool = False):
+    """Row i holds the indices of the k rows of `docs` nearest to `queries[i]`.
 
-    Vectors are unit-normalised at build time, so the dot product IS the
-    cosine; no renormalisation here, and a change to that invariant in
-    mmapstore.build would silently turn this into an inner-product search.
+    The search itself, on plain matrices: `docs` may be a memory-mapped
+    float16 store, `queries` any float matrix of the same width. Both are
+    assumed unit-normalised, so the dot product is the cosine. With
+    `return_scores` the matching similarities come back too, which saves the
+    caller a second gather over a store that does not fit in RAM.
     """
-    docs = store._doc
     n_docs = docs.shape[0]
     k = min(k, n_docs)
-    out = np.empty((len(context_ids), k), dtype=np.int64)
+    out = np.empty((len(queries), k), dtype=np.int64)
+    scores = np.empty((len(queries), k), dtype=np.float32) if return_scores else None
 
-    for q0 in range(0, len(context_ids), query_chunk):
-        ids = context_ids[q0:q0 + query_chunk]
-        rows = np.fromiter((store._ctx_ix[c] for c in ids),
-                           dtype=np.int64, count=len(ids))
-        q = store._ctx[rows].astype(np.float32)
-        best_s = np.full((len(ids), 0), -np.inf, dtype=np.float32)
-        best_i = np.zeros((len(ids), 0), dtype=np.int64)
+    for q0 in range(0, len(queries), query_chunk):
+        q = np.asarray(queries[q0:q0 + query_chunk], dtype=np.float32)
+        best_s = np.full((len(q), 0), -np.inf, dtype=np.float32)
+        best_i = np.zeros((len(q), 0), dtype=np.int64)
 
         for p0 in range(0, n_docs, paper_block):
             block = docs[p0:p0 + paper_block].astype(np.float32)
@@ -94,9 +93,33 @@ def top_k(store: MmapScorer, context_ids: list[str], k: int,
             del sims, block
 
         order = np.argsort(-best_s, axis=1)[:, :k]
-        out[q0:q0 + len(ids)] = np.take_along_axis(best_i, order, axis=1)
+        out[q0:q0 + len(q)] = np.take_along_axis(best_i, order, axis=1)
+        if scores is not None:
+            scores[q0:q0 + len(q)] = np.take_along_axis(best_s, order, axis=1)
         if progress:
-            progress(min(q0 + len(ids), len(context_ids)), len(context_ids))
+            progress(min(q0 + len(q), len(queries)), len(queries))
+    return (out, scores) if return_scores else out
+
+
+def top_k(store: MmapScorer, context_ids: list[str], k: int,
+          query_chunk: int = QUERY_CHUNK, paper_block: int = PAPER_BLOCK,
+          progress=None) -> np.ndarray:
+    """Row i holds the store-row indices of the k nearest papers to query i.
+
+    Vectors are unit-normalised at build time, so the dot product IS the
+    cosine; no renormalisation here, and a change to that invariant in
+    mmapstore.build would silently turn this into an inner-product search.
+    """
+    rows = np.fromiter((store._ctx_ix[c] for c in context_ids),
+                       dtype=np.int64, count=len(context_ids))
+    out = np.empty((len(rows), min(k, store._doc.shape[0])), dtype=np.int64)
+    # Chunked here as well as inside, so the query matrix itself is never
+    # materialised for more than one chunk of a memory-mapped context table.
+    for q0 in range(0, len(rows), query_chunk):
+        q = store._ctx[rows[q0:q0 + query_chunk]].astype(np.float32)
+        out[q0:q0 + len(q)] = top_k_vectors(store._doc, q, k, query_chunk, paper_block)
+        if progress:
+            progress(min(q0 + len(q), len(rows)), len(rows))
     return out
 
 

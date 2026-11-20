@@ -86,6 +86,18 @@ def revision_for(model: str, override: str | None = None) -> str | None:
     return pinned
 
 
+def missing_rows(frame: pl.DataFrame, have: set[tuple[str, str]]) -> pl.DataFrame:
+    """Rows of an embed-inputs frame whose (key, kind) is not already embedded.
+
+    Keyed on the pair, not the key alone: a context id and a paper id are
+    different namespaces, and a paper vector does not cover a context that
+    happens to share its id.
+    """
+    keep = [(k, kind) not in have
+            for k, kind in zip(frame["key"].to_list(), frame["kind"].to_list(), strict=True)]
+    return frame.filter(pl.Series(keep))
+
+
 def pick_device() -> str:
     """cuda -> mps -> cpu, in order of how much of the recipe they preserve.
 
@@ -172,12 +184,34 @@ def main(argv: list[str] | None = None) -> int:
                     help="commit hash to load --model at; overrides the pin "
                          "and is required for reproducibility with an "
                          "unpinned model")
+    ap.add_argument("--reuse", type=Path, default=None,
+                    help="an existing embeddings parquet from the SAME model: "
+                         "only rows it does not cover are embedded, and the "
+                         "output is the union. For rebuilding pools that "
+                         "differ slightly from ones already embedded")
     ap.add_argument("--device", default=None, choices=(None, "cuda", "mps", "cpu"))
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--max-length", type=int, default=MAX_LENGTH)
     args = ap.parse_args(argv)
 
     frame = pl.read_parquet(args.input)
+    reused = None
+    if args.reuse is not None:
+        reused = pl.read_parquet(args.reuse)
+        wanted = set(zip(frame["key"].to_list(), frame["kind"].to_list(), strict=True))
+        have = set(zip(reused["key"].to_list(), reused["kind"].to_list(), strict=True))
+        reused = reused.filter(pl.Series(
+            [(k, kind) in wanted for k, kind in
+             zip(reused["key"].to_list(), reused["kind"].to_list(), strict=True)]))
+        todo = missing_rows(frame, have)
+        print(f"reusing {reused.height} vectors from {args.reuse}; "
+              f"embedding {todo.height} of {frame.height} rows")
+        if todo.height == 0:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            reused.select("key", "kind", "embedding").write_parquet(args.output)
+            print(f"{reused.height} vectors written to {args.output} (all reused)")
+            return 0
+        frame = todo
     out = embed_frame(
         frame, args.model, device=args.device, batch_size=args.batch_size,
         max_length=args.max_length, revision=args.revision,
@@ -192,6 +226,13 @@ def main(argv: list[str] | None = None) -> int:
             "vector has undefined cosine and a NaN one poisons its pool"
         )
 
+    if reused is not None:
+        dim = out.schema["embedding"].size
+        out = pl.concat([
+            reused.select("key", "kind",
+                          pl.col("embedding").cast(pl.Array(pl.Float32, dim))),
+            out,
+        ])
     args.output.parent.mkdir(parents=True, exist_ok=True)
     out.write_parquet(args.output)
     print(f"{out.height} vectors written to {args.output} "

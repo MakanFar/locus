@@ -421,3 +421,25 @@ def test_experiment_b_intervals_use_the_papers_thousand_resamples():
     # cannot quietly diverge from the other five entry points again.
     from locus.experiments import completion
     assert completion.N_BOOT == 1000
+
+
+def test_the_report_header_says_what_was_run_and_leaks_no_path():
+    # A report has to say which association measure produced it -- the PPMI
+    # and node2vec runs are otherwise indistinguishable files -- and which
+    # averaging unit its numbers use. The task is recorded by file name: a
+    # report is published, and an absolute path names a home directory.
+    from pathlib import Path
+
+    from locus.experiments.completion import run_header
+
+    got = run_header(split="test", mode="selfseed",
+                     task_path=Path("/somewhere/private/expb_task_test.jsonl"),
+                     locations=22274, seeds=3, assoc="node2vec",
+                     selected={"lambda": 15.0, "alpha": 0.5, "min_count": 1},
+                     standardize="zscore")
+    assert got["task"] == "expb_task_test.jsonl"
+    assert got["assoc"] == "node2vec"
+    assert got["averaging"] == "paper"
+    assert got["lambda"] == 15.0 and got["selected"]["alpha"] == 0.5
+    assert got["locations"] == 22274 and got["seeds"] == 3
+    assert got["standardize"] == "zscore"

@@ -6,28 +6,61 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-20
+
 ### Added
 - `locus fetch` defaults to the deposited core bundle
-  (doi:10.5281/zenodo.22260046); `--manifest-url` is now an override.
+  (doi:10.5281/zenodo.24383365, version 0.3.0); `--manifest-url` is now an
+  override.
 - `reports/`: the run reports every number in the paper is read from, with a
   table/figure -> file map in `reports/README.md`.
-- `locus exp anchors` writes the Figure 4 anchor map (`anchor_map_{tag}.json`
+- `locus exp anchors` writes the Figure 3 anchor map (`anchor_map_{tag}.json`
   and a pgfplots table) from the influence rows.
-- `locus eval rank` reports the coverage stratification (Table 6) and the
+- `locus eval rank` reports the coverage stratification (Table 9) and the
   other-location control paired against the base; `locus.eval.controls`
   pairs every anchor arm against the base.
 - `locus exp completion --standardize {zscore,none}`: the base is z-scored
   over the candidate list by default, which is Eq. 1 and the scale lambda was
-  selected on. `none` reproduces the raw-cosine numbers of earlier drafts.
+  selected on. `none` is the raw-cosine base the paper's sequential-completion
+  numbers use.
 - `locus embed --revision`, with per-model pins (`MODEL_REVISIONS`) so
   `--model malteos/scincl` no longer loads at SPECTER2's commit.
+
+- `scripts/reproduce.sh`: every command in `docs/reproduce.md` as one
+  resumable script, by stage (`tier0`, `all`, or named stages).
+- Ported from the working harness: `locus eval rank --anchor-route
+  {union,marker,clustering}` and pool-level means with `pool_cluster_ci`
+  intervals in every rank report; `locus exp proximity` (anchors by
+  citation group / sentence / other sentence); `locus exp annotation-sample`
+  and `docs/annotation_protocol.md`; `--theta` on `build pipeline` and
+  `build graph`; `locus exp theta` (sensitivity to the clustering
+  threshold); `locus embed --reuse`; and
+  `reports/paper_map.json` with
+  `locus.core.provenance`, which ties each printed number to a report key
+  and to what it was measured on (`tests/test_paper_map.py`).
+- `locus exp annotation-score`: the hand-label study of
+  `docs/annotation_protocol.md`, scored. Reads the key and the two readers'
+  labels with their consensus (`reports/annotation_{key,labels}.csv`, the
+  pilot alongside) and writes `reports/annotation_score.json`: agreement and
+  kappa, post-stratified precision and recall per route under both site
+  definitions with paper-level bootstrap intervals, the proxy-tier check,
+  the error anatomy per 100 contexts and the rescoring of the headline pools
+  the labels touch.
+- `scripts/hard_easy_contrast.py`: the hard-versus-easy gain comparison with
+  one paper-level bootstrap over both slices, so the difference and ratio of
+  the two gains carry intervals of their own (`reports/hard_easy_contrast_specter2.json`).
 
 ### Changed
 - `docs/reproduce.md` now gives a command and the expected numbers for every
   row in the paper: both probes on all four bases, the controls, the raw
-  co-count, node2vec and sibling-titles ablations, the leaky graph, the
-  corpus-wide retrieval step, and the memory constraint on running the
-  embedder and the completion experiment together.
+  co-count, node2vec and sibling-titles ablations, the corpus-wide retrieval
+  step, and the memory constraint on running the embedder and the completion
+  experiment together.
+- Sequential completion is reported as the full 2x2 of candidate scope and
+  first-anchor source (paper Table 3): `expb_report_revealed_corpuswide.json`
+  (corpus-wide candidates, revealed first citation) joins the other three
+  cells, and both revealed runs also report recall over the members left
+  after the seed (paper Table 4).
 - `build/` is gitignored: a non-editable `pip install .` writes it into the
   source tree.
 - Report files are named for what they hold: `build_report_{split}.json`
@@ -35,9 +68,38 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Sequential-completion intervals use 1000 bootstrap resamples, like every other
   interval in the paper (was 500).
 
+### Fixed
+- LOCUS-Rank distractors are now drawn outside both anchor routes. They were
+  drawn outside the location's cluster only, so a paper the marker route
+  places in the target's window could be a distractor and one of the pool's
+  anchors at once (22.9% of test headline pools). The frozen pools, the
+  export, `reports/`, the golden digest and every expected number in
+  `docs/reproduce.md` were regenerated: 54,020 test rank items (was 55,488),
+  34,577 headline pools (was 35,701), headline MRR 0.49672 -> 0.62054
+  (+0.12382; was 0.47771 -> 0.59585). Validation now selects alpha 0.75,
+  lambda 3.0 for SPECTER2, which `locus verify` takes as its defaults. The
+  bundle and the embeddings were re-deposited as version 0.3.0
+  (doi:10.5281/zenodo.24383365 and doi:10.5281/zenodo.24383583); the 0.2.0
+  deposits predate the fix.
+- `reports/expb_report_*.json` are now the `--standardize none` runs, which is
+  the setting the paper's sequential-completion numbers come from; the
+  `zscore` default remains available as an ablation.
+
 ### Removed
 - `CITATION.cff`: citation metadata is deferred until the paper has a
   citable form; the Zenodo records carry their own.
+- `locus exp corpus-rank` and `reports/corpus_rank_specter2.json`: the
+  corpus-wide-negatives and corpus-scale Rank runs no longer back a number in
+  the paper.
+- `locus build graph --splits`: the deliberately leaky train+val+test graph
+  and its reports (`graph_report_full.json`, `sweep_val_fullgraph.json`,
+  `rank_report_fullgraph.json`); the leakage row left the controls table.
+  The graph is train-only, and the leakage gate still fails any build that
+  counts a held-out paper.
+- `information_state` in `locus exp completion` reports (the next-pick curve
+  behind a dropped figure) and the stratified example sample (`strata`,
+  `--per-stratum`) in `locus exp anchors` (behind a dropped examples table).
+  Both keys were removed from the committed `reports/`.
 - `locus.scoring.adapt` (MNRL adapter) and `locus.experiments.intent` with
   the `locus exp intent` verb: neither backs a result in the paper, and the
   adapter depended on a training script that is not in this repository.

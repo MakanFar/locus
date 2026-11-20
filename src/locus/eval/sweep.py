@@ -34,7 +34,7 @@ from locus import config
 from locus.core.bootstrap import paper_mean
 from locus.core.probe import reciprocal_rank
 from locus.core.rescore import zscore_pool
-from locus.core.types import anchors_union, gold_sets
+from locus.core.types import anchors_for, gold_sets
 from locus.data.corpus import load_index
 from locus.scoring import base_scorer
 from locus.scoring.cocitation import CoGraph
@@ -51,7 +51,8 @@ LAMBDAS = (0.0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0,
 
 
 def build_pools(split: str, embeddings: Path,
-                slice_: str = "headline", *, scorer=None) -> list[dict]:
+                slice_: str = "headline", *, scorer=None,
+                anchor_route: str = "union") -> list[dict]:
     """One entry per rank item in `slice_`: base cosines, z-scores, anchors.
 
     headline  the pre-registered set: hard AND pool >= 10 AND |A(l)| >= 1.
@@ -64,6 +65,11 @@ def build_pools(split: str, embeddings: Path,
 
     Every kept rank item already has a full pool: build_day1 drops the rest
     under `too_few_distractors`, which is what keeps the H_10/10 floor exact.
+
+    `anchor_route` chooses which evidence the anchor sets come from (see
+    `core.types.anchors_for`). It never changes WHICH pools are returned: the
+    slices are frozen on the union, so under a single route some pools have an
+    empty anchor set and are rescored to exactly their base.
     """
     if slice_ not in ("headline", "easy", "all"):
         raise ValueError(f"unknown slice {slice_!r}")
@@ -80,7 +86,7 @@ def build_pools(split: str, embeddings: Path,
     for recs in index.values():
         golds = gold_sets(recs)
         for rec in recs:
-            anchor_of[rec.context_id] = anchors_union(rec, golds)
+            anchor_of[rec.context_id] = frozenset(anchors_for(rec, golds, anchor_route))
 
     pools = []
     for item in items:

@@ -7,7 +7,6 @@ from locus.experiments.anchor_analysis import (
     categorise,
     grid,
     null_decomposition,
-    strata,
     topical_split,
 )
 
@@ -193,67 +192,10 @@ class TestTopicalSplit:
         assert topical_split(rows, 0.9)["n_known_similarity"] == 1
 
 
-class TestStrata:
-    def _rows(self):
-        rows = [   # non-co-cited, harmful
-            _row(ctx=f"c{i}", anchor=f"a{i}", ppmi=0.0,
-                 sim=0.90 + i / 1000, d_rr=-0.1)
-            for i in range(60)
-        ]
-        rows.extend(   # informative, cross-topic
-            _row(ctx=f"d{i}", anchor=f"b{i}", ppmi=10.0,
-                 sim=0.10 + i / 1000, d_rr=0.9)
-            for i in range(60)
-        )
-        return rows
-
-    def test_sampling_is_deterministic_for_a_fixed_seed(self):
-        rows = self._rows()
-        a = strata(rows, 0.5, seed=0)
-        b = strata(rows, 0.5, seed=0)
-        for k in a:
-            if k.startswith("_"):
-                continue
-            assert [r["anchor"] for r in a[k]["sample"]] == \
-                [r["anchor"] for r in b[k]["sample"]]
-
-    def test_a_different_seed_draws_a_different_sample(self):
-        # Otherwise "fixed seed" is decoration and the sample is not actually
-        # a draw from the stratum.
-        rows = self._rows()
-        a = strata(rows, 0.5, seed=0)["informative_cross_topic"]["sample"]
-        b = strata(rows, 0.5, seed=7)["informative_cross_topic"]["sample"]
-        assert [r["anchor"] for r in a] != [r["anchor"] for r in b]
-
-    def test_population_is_reported_alongside_the_sample(self):
-        # The anti-cherry-pick guarantee is the population count, not the
-        # sample: 3 examples drawn from 12 and from 12,000 read identically
-        # on the page and mean entirely different things.
-        rows = self._rows()
-        st = strata(rows, 0.5, seed=0, per_stratum=3)
-        assert st["informative_cross_topic"]["population"] == 60
-        assert len(st["informative_cross_topic"]["sample"]) == 3
-
-    def test_sampling_never_exceeds_a_thin_stratum(self):
-        rows = [_row(ppmi=0.0, sim=0.99, d_rr=-0.1)]
-        st = strata(rows, 0.5, seed=0, per_stratum=10)
-        assert len(st["non_cocited_harmful"]["sample"]) == 1
-        assert st["informative_cross_topic"]["sample"] == []
-
-    def test_rows_without_a_similarity_are_excluded_and_counted(self):
-        # 64 real interventions have no vector. An example printed with a
-        # blank cosine is not an example of anything on the cosine axis.
-        rows = [_row(ppmi=9.0, d_rr=0.5, sim=None),
-                _row(ppmi=9.0, d_rr=0.5, sim=0.99, anchor="b")]
-        st = strata(rows, 0.5, seed=0)
-        assert st["_excluded_no_similarity"] == 1
-        assert st["informative_aligned"]["population"] == 1
-
-
 class TestAnchorMap:
-    """Figure 4: mean rank influence on a fixed PPMI-band x cosine-octile grid.
+    """Figure 3: mean rank influence on a fixed PPMI-band x cosine-octile grid.
 
-    The paper's grid was produced once and transcribed into figure_4.tex; this
+    The paper's grid was produced once and transcribed into figure_3.tex; this
     is the code that regenerates it, so its conventions are pinned here: PPMI
     edges are fixed (zero is its own band, then 7.5, 8.5, 9, 9.5, 10, 11), the
     cosine edges are the eight quantiles of the observed similarities, and the
@@ -302,8 +244,8 @@ class TestAnchorMap:
         assert bottom_cells[0] == (1, -1.0)
         assert all(cell == (0, None) for cell in top_cells[:-1])
 
-    def test_pgfplots_table_matches_figure_4_layout(self):
-        # figure_4.tex reads `x y value` triples, x = cosine octile 0..7,
+    def test_pgfplots_table_matches_figure_3_layout(self):
+        # figure_3.tex reads `x y value` triples, x = cosine octile 0..7,
         # y = PPMI band 0..7 with 0 the zero band and 7 the >= 11 band, one
         # blank line between bands, values at 4 dp. Empty cells print `nan`.
         from locus.experiments.anchor_analysis import anchor_map, pgfplots_table

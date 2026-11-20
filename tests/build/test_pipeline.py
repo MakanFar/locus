@@ -108,3 +108,28 @@ def test_the_published_build_still_enforces_the_scale_gates(
     assert report["scale_notes"] == []
     assert any("headline set" in f for f in report["failures"])
     assert any("hard fraction" in f for f in report["failures"])
+
+
+def test_theta_flag_reaches_the_clusterer_and_the_report(monkeypatch, tmp_path, second_corpus):
+    """`--theta` is the sensitivity-analysis knob for location clustering.
+
+    The frozen benchmark is theta = 0.5 and stays that way; this flag exists so
+    the published result can be shown not to depend on that choice. It has to
+    reach `build_index` AND be the value the report records -- a report that
+    kept naming `config.THETA` would describe a build that did not happen.
+    """
+    monkeypatch.setattr(config, "WORK_DIR", tmp_path)
+    monkeypatch.delenv("LOCUS_DATA_DIR", raising=False)
+    seen = {}
+    real = build_day1.build_index
+
+    def spy(split, **kw):
+        seen.update(kw)
+        return real(split, **kw)
+
+    monkeypatch.setattr(build_day1, "build_index", spy)
+    build_day1.main(["--corpus", str(second_corpus), "--split", "test",
+                     "--pool-size", "7", "--theta", "0.3"])
+    assert seen["theta"] == 0.3
+    report = json.loads((tmp_path / "build_report_test.json").read_text())
+    assert report["config"]["theta"] == 0.3

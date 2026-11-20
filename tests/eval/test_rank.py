@@ -174,7 +174,7 @@ def _pool_with(scores, anchors, gold="g", citing="p", ctx="c"):
 
 
 class TestCoverageStratum:
-    """Table 6: what the training graph knows about each headline pool.
+    """Table 9: what the training graph knows about each headline pool.
 
     A pool is `target` when PPMI(gold, A) > 0, `distractor` when the gold is
     unseen but some distractor is co-cited with the anchors, and `none` when
@@ -254,7 +254,7 @@ def test_coverage_strata_also_reports_the_combined_unseen_row():
 
 def test_main_reports_coverage_and_the_other_location_arm_against_base(
         monkeypatch, tmp_path):
-    # Table 7's "other location" row is stated against the BASE (0.478 ->
+    # Table 10's "other location" row is stated against the BASE (0.478 ->
     # 0.388), while gate 2 pairs it against the same-location arm. Both
     # readings come from one run, so the report has to carry both intervals.
     import json
@@ -284,3 +284,78 @@ def test_main_reports_coverage_and_the_other_location_arm_against_base(
     assert {"a", "b", "delta", "ci", "n"} <= set(row)
     assert row["b"] == pytest.approx(report["gate1_primary"]["b"])
     assert row["a"] == pytest.approx(report["gate2_other_location_control"]["b"])
+
+
+def test_coverage_strata_carry_pool_level_means_that_recombine_exactly():
+    # The reported metric is a mean over citing papers, and a paper can sit in
+    # several strata, so paper-level stratum means do not recombine to the
+    # total. The pool-level means do, exactly, and the table needs both: the
+    # first is the estimand, the second is the decomposition that adds up.
+    # Paper p1 owns three pools across two strata to make the two units differ.
+    from locus.eval.rank import COVERAGE_STRATA, coverage_strata
+    ppmi = _TablePPMI({("g", "a"): 5.0, ("x", "b"): 5.0})
+    pools = [
+        _pool_with({"g": 1.0, "x": 2.0}, ["a"], citing="p1", ctx="c1"),   # target, 0.5 -> 1.0
+        _pool_with({"g": 2.0, "x": 1.0}, ["a"], citing="p1", ctx="c2"),   # target, 1.0 -> 1.0
+        _pool_with({"g": 2.0, "x": 1.0}, ["b"], citing="p1", ctx="c3"),   # distractor, 1.0 -> 0.5
+        _pool_with({"g": 1.0, "x": 2.0}, ["a"], citing="p2", ctx="c4"),   # target, 0.5 -> 1.0
+        _pool_with({"g": 2.0, "x": 1.0}, ["z"], citing="p3", ctx="c5"),   # none, 1.0 -> 1.0
+    ]
+    got = coverage_strata(pools, ppmi, lam=1.0, agg="mean", seed=0)
+    for s in (*COVERAGE_STRATA, "unseen"):
+        assert {"pool_b", "pool_a", "pool_delta", "papers"} <= set(got[s])
+    # target stratum: paper-level base is mean(mean(0.5, 1.0), 0.5) = 0.625,
+    # pool-level base is mean(0.5, 1.0, 0.5) = 2/3 -- two different numbers.
+    assert got["target"]["b"] == pytest.approx(0.625)
+    assert got["target"]["pool_b"] == pytest.approx(2 / 3)
+    assert got["target"]["papers"] == 2
+    # the pool-level rows recombine to the pool-level overall, exactly
+    n = len(pools)
+    mixed = sum(got[s]["n"] * got[s]["pool_a"] for s in COVERAGE_STRATA) / n
+    assert mixed == pytest.approx((1.0 + 1.0 + 0.5 + 1.0 + 1.0) / 5)
+    assert sum(got[s]["n"] * got[s]["pool_delta"] for s in COVERAGE_STRATA) / n \
+        == pytest.approx((0.5 + 0.0 - 0.5 + 0.5 + 0.0) / 5)
+
+
+def test_main_records_the_anchor_route_and_the_pool_level_headline(
+        monkeypatch, tmp_path):
+    # Two reviewer-facing facts have to be in the report rather than in a
+    # caption: which evidence route the anchors came from, and the pool-level
+    # headline alongside the paper-level one.
+    import json
+
+    ppmi = _TablePPMI({("g", "a"): 5.0})
+    pools = [
+        _pool_with({"g": 1.0, "x": 2.0}, ["a"], citing="p1", ctx="c1"),
+        _pool_with({"g": 2.0, "x": 1.0}, [], citing="p1", ctx="c2"),
+        _pool_with({"g": 1.0, "x": 2.0}, ["a"], citing="p2", ctx="c3"),
+    ]
+    seen = {}
+
+    def fake_build_pools(*a, **k):
+        seen.update(k)
+        return pools
+
+    monkeypatch.setattr(rank_mod, "build_pools", fake_build_pools)
+    monkeypatch.setattr(rank_mod, "other_location_anchors",
+                        lambda split, seed: {"c1": frozenset(["b"]), "c2": frozenset(["b"]), "c3": frozenset(["b"])})
+    monkeypatch.setattr(rank_mod, "base_scorer", lambda *a, **k: None)
+    monkeypatch.setattr(rank_mod.CoGraph, "load", classmethod(lambda cls, p: None))
+    monkeypatch.setattr(rank_mod, "association", lambda *a, **k: ppmi)
+    sweep = tmp_path / "sweep.json"
+    sweep.write_text(json.dumps({"best": {"alpha": 0.5, "min_count": 1, "lambda": 1.0}}))
+    out = tmp_path / "report.json"
+    rank_mod.main(["--embeddings", "x.parquet", "--sweep", str(sweep), "--graph", "g.npz",
+                   "--anchor-route", "marker", "--out", str(out)])
+    report = json.loads(out.read_text())
+
+    assert seen["anchor_route"] == "marker"
+    assert report["anchor_route"] == "marker"
+    assert report["averaging"] == "paper"
+    assert report["papers"] == 2
+    assert report["pools_with_anchors"] == 2
+    # paper-level: p1 = mean(0.5->1.0, 1.0->1.0) so delta 0.25; p2 delta 0.5 -> 0.375
+    assert report["gate1_primary"]["delta"] == pytest.approx(0.375)
+    # pool-level: mean(0.5, 0.0, 0.5) = 1/3
+    assert report["gate1_pool_level"]["delta"] == pytest.approx(1 / 3)
+    assert report["gate1_on_anchored"]["n"] == 2

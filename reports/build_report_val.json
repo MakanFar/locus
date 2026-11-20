@@ -82,15 +82,15 @@
   "marker_anchors_total": 244485,
   "clustering_disagreement": 47862,
   "pool_drop_reasons": {
-    "too_few_distractors": 40257,
+    "too_few_distractors": 41870,
     "single_location": 3378,
     "alignment_failed": 19585,
-    "kept": 49559
+    "kept": 47946
   },
-  "rank_items": 49559,
+  "rank_items": 47946,
   "swap_pair_count": 33203,
-  "hard": 38835,
-  "headline": 31402,
+  "hard": 37610,
+  "headline": 30177,
   "null_controls": {
     "swap_popularity": {
       "value": 0.5,
@@ -111,13 +111,13 @@
     "rank_constant": {
       "value": 0.2928968253968254,
       "ci": [
-        0.2928968253968254,
-        0.2928968253968254
+        0.2928968253968253,
+        0.2928968253968253
       ],
       "ok": true
     },
     "rank_popularity": {
-      "value": 0.352294182308556,
+      "value": 0.3564258381866252,
       "moves_off_floor": true
     }
   },

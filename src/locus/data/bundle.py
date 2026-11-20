@@ -60,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="locus bundle", description=__doc__)
     ap.add_argument("--work", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--version", default="0.2.0")
+    ap.add_argument("--version", default="0.3.0")
     args = ap.parse_args(argv)
 
     export = args.work / "export"

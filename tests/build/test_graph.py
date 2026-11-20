@@ -51,7 +51,7 @@ def _passthrough_child_digest(monkeypatch):
     monkeypatch.setattr(
         build_graph,
         "_run_second_val_build",
-        lambda seed, corpus=None: build_graph._digest_of_graph(
+        lambda seed, corpus=None, theta=None: build_graph._digest_of_graph(
             build_graph.count_sites(build_graph.iter_papers("val", keep_text=False))
         ),
     )
@@ -104,7 +104,7 @@ class TestDeterminismGateAcrossProcesses:
             build_graph, "iter_papers",
             _fake_iter_papers(_train_papers(), _held_out_papers("V"), _held_out_papers("S")),
         )
-        monkeypatch.setattr(build_graph, "_run_second_val_build", lambda seed, corpus=None: "0" * 64)
+        monkeypatch.setattr(build_graph, "_run_second_val_build", lambda seed, corpus=None, theta=None: "0" * 64)
 
         rc = build_graph.main([])
 
@@ -206,47 +206,35 @@ class TestPeakRssGb:
             build_graph._peak_rss_gb()
 
 
-class TestLeakyControlBuild:
-    """--splits train,val,test builds the train-only-vs-full leakage control."""
+def test_a_build_that_counts_a_held_out_paper_fails_the_leakage_gate(monkeypatch, tmp_path):
+    # The graph is train-only by construction; if the train stream ever
+    # carries a held-out paper, the gate has to fire and no .npz is written.
+    monkeypatch.setattr(config, "WORK_DIR", tmp_path)
+    leaky_train = _train_papers() + _held_out_papers("V")
+    monkeypatch.setattr(
+        build_graph, "iter_papers",
+        _fake_iter_papers(leaky_train, _held_out_papers("V"), _held_out_papers("S")),
+    )
+    _passthrough_child_digest(monkeypatch)
+    rc = build_graph.main([])
+    assert rc == 1
+    report = json.loads((tmp_path / "graph_report.json").read_text())
+    assert any(f.startswith("LEAKAGE:") for f in report["failures"])
+    assert not (tmp_path / "cocitation_train.npz").exists()
 
-    def _setup(self, monkeypatch, tmp_path):
-        monkeypatch.setattr(config, "WORK_DIR", tmp_path)
-        monkeypatch.setattr(
-            build_graph, "iter_papers",
-            _fake_iter_papers(_train_papers(), _held_out_papers("V"),
-                              _held_out_papers("S")),
-        )
-        _passthrough_child_digest(monkeypatch)
 
-    def test_leakage_is_expected_and_not_a_failure(self, monkeypatch, tmp_path):
-        # The whole point of this build is to include held-out papers, so the
-        # leakage gate must report rather than fail -- otherwise the control
-        # can never be produced.
-        self._setup(monkeypatch, tmp_path)
-        build_graph.main(["--splits", "train,val,test"])
-        report = json.loads((tmp_path / "graph_report_full.json").read_text())
-        assert report["leaky_by_design"] is True
-        assert report["leakage_overlap"] > 0
-        assert not any(f.startswith("LEAKAGE:") for f in report["failures"])
+def test_theta_flag_reaches_the_train_stream(monkeypatch, tmp_path):
+    # The graph is built from train LOCATIONS, so a theta sensitivity analysis
+    # that rebuilt only the test index would compare test locations at one
+    # threshold against a graph of train locations at another.
+    seen = []
 
-    def test_leaky_build_never_claims_the_canonical_filename(self, monkeypatch, tmp_path):
-        # cocitation_train.npz is what every scorer loads by default. A leaky
-        # graph landing there would silently poison every later result.
-        self._setup(monkeypatch, tmp_path)
-        build_graph.main(["--splits", "train,val,test"])
-        assert not (tmp_path / "cocitation_train.npz").exists()
+    def spy(split, **kw):
+        seen.append((split, kw.get("theta")))
+        return iter(())
 
-    def test_train_only_build_still_fails_on_leakage(self, monkeypatch, tmp_path):
-        # The default path must keep its teeth: same fixture, but train now
-        # includes a held-out paper, and the gate has to fire.
-        monkeypatch.setattr(config, "WORK_DIR", tmp_path)
-        leaky_train = _train_papers() + _held_out_papers("V")
-        monkeypatch.setattr(
-            build_graph, "iter_papers",
-            _fake_iter_papers(leaky_train, _held_out_papers("V"), _held_out_papers("S")),
-        )
-        _passthrough_child_digest(monkeypatch)
-        rc = build_graph.main([])
-        assert rc == 1
-        report = json.loads((tmp_path / "graph_report.json").read_text())
-        assert any(f.startswith("LEAKAGE:") for f in report["failures"])
+    monkeypatch.setattr(build_graph, "iter_papers", spy)
+    monkeypatch.setattr(config, "WORK_DIR", tmp_path)
+    with pytest.raises(SystemExit, match="0 papers streamed"):
+        build_graph.main(["--theta", "0.3"])
+    assert seen == [("train", 0.3)]

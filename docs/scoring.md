@@ -100,8 +100,8 @@ locus eval rank --texts work/embed_inputs_test.parquet --sweep work/sweep_val_bm
 ```
 
 Okapi BM25 with Lucene's `log(1 + (N-n+0.5)/(n+0.5))` idf over the *paper*
-rows, `k1 = 1.5`, `b = 0.75`, untuned. On test it scores MRR `0.50174` ->
-`0.60399` (`+0.10226`), which is a **stronger base than any dense encoder
+rows, `k1 = 1.5`, `b = 0.75`, untuned. On test it scores MRR `0.52212` ->
+`0.62579` (`+0.10366`), which is a **stronger base than any dense encoder
 measured here** -- `hardness.is_easy` suppresses title and author overlap
 between window and target, not abstract overlap, so the hard slice is not
 lexically neutral.
